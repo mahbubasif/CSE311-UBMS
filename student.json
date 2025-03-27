@@ -1,0 +1,212 @@
+[
+  {
+      "StudentID": 1001,
+      "UniversityID": 1,
+      "Name": "Emily Rodriguez",
+      "DOB": "2002-03-15",
+      "AdmissionDate": "2020-09-01"
+  },
+  {
+      "StudentID": 1002,
+      "UniversityID": 1,
+      "Name": "Michael Chen",
+      "DOB": "2001-11-22",
+      "AdmissionDate": "2019-01-15"
+  },
+  {
+      "StudentID": 1003,
+      "UniversityID": 1,
+      "Name": "Aisha Patel",
+      "DOB": "2002-07-04",
+      "AdmissionDate": "2020-02-10"
+  },
+  {
+      "StudentID": 1004,
+      "UniversityID": 1,
+      "Name": "David Thompson",
+      "DOB": "2001-05-19",
+      "AdmissionDate": "2018-09-01"
+  },
+  {
+      "StudentID": 1005,
+      "UniversityID": 1,
+      "Name": "Sarah Kim",
+      "DOB": "2002-01-27",
+      "AdmissionDate": "2021-03-15"
+  },
+  {
+      "StudentID": 1006,
+      "UniversityID": 1,
+      "Name": "Carlos Mendoza",
+      "DOB": "2001-09-11",
+      "AdmissionDate": "2019-06-20"
+  },
+  {
+      "StudentID": 1007,
+      "UniversityID": 1,
+      "Name": "Olivia Williams",
+      "DOB": "2002-06-03",
+      "AdmissionDate": "2020-11-01"
+  },
+  {
+      "StudentID": 1008,
+      "UniversityID": 1,
+      "Name": "Ryan Nakamura",
+      "DOB": "2001-12-16",
+      "AdmissionDate": "2018-01-30"
+  },
+  {
+      "StudentID": 1009,
+      "UniversityID": 1,
+      "Name": "Emma Fitzgerald",
+      "DOB": "2002-04-29",
+      "AdmissionDate": "2021-02-15"
+  },
+  {
+      "StudentID": 1010,
+      "UniversityID": 1,
+      "Name": "Alexander Volkov",
+      "DOB": "2001-08-07",
+      "AdmissionDate": "2019-09-01"
+  },
+  {
+      "StudentID": 1011,
+      "UniversityID": 1,
+      "Name": "Isabella Santos",
+      "DOB": "2002-02-14",
+      "AdmissionDate": "2020-05-10"
+  },
+  {
+      "StudentID": 1012,
+      "UniversityID": 1,
+      "Name": "Lucas Okonkwo",
+      "DOB": "2001-10-25",
+      "AdmissionDate": "2018-11-15"
+  },
+  {
+      "StudentID": 1013,
+      "UniversityID": 1,
+      "Name": "Sophia Martinez",
+      "DOB": "2002-05-30",
+      "AdmissionDate": "2021-01-20"
+  },
+  {
+      "StudentID": 1014,
+      "UniversityID": 1,
+      "Name": "Benjamin Lee",
+      "DOB": "2001-07-12",
+      "AdmissionDate": "2019-03-05"
+  },
+  {
+      "StudentID": 1015,
+      "UniversityID": 1,
+      "Name": "Zara Ahmed",
+      "DOB": "2002-01-09",
+      "AdmissionDate": "2020-07-15"
+  },
+  {
+      "StudentID": 1016,
+      "UniversityID": 1,
+      "Name": "Victor Petrova",
+      "DOB": "2001-11-03",
+      "AdmissionDate": "2018-06-25"
+  },
+  {
+      "StudentID": 1017,
+      "UniversityID": 1,
+      "Name": "Elena Rodriguez",
+      "DOB": "2002-06-21",
+      "AdmissionDate": "2021-04-01"
+  },
+  {
+      "StudentID": 1018,
+      "UniversityID": 1,
+      "Name": "Mohammed Ali",
+      "DOB": "2001-09-18",
+      "AdmissionDate": "2019-12-10"
+  },
+  {
+      "StudentID": 1019,
+      "UniversityID": 1,
+      "Name": "Nina Kawasaki",
+      "DOB": "2002-03-07",
+      "AdmissionDate": "2020-08-20"
+  },
+  {
+      "StudentID": 1020,
+      "UniversityID": 1,
+      "Name": "Jacob Cohen",
+      "DOB": "2001-12-05",
+      "AdmissionDate": "2018-02-15"
+  },
+  {
+      "StudentID": 1021,
+      "UniversityID": 1,
+      "Name": "Rachel Green",
+      "DOB": "2002-04-12",
+      "AdmissionDate": "2021-05-30"
+  },
+  {
+      "StudentID": 1022,
+      "UniversityID": 1,
+      "Name": "Diego Ramirez",
+      "DOB": "2001-08-16",
+      "AdmissionDate": "2019-10-05"
+  },
+  {
+      "StudentID": 1023,
+      "UniversityID": 1,
+      "Name": "Priya Sharma",
+      "DOB": "2002-02-28",
+      "AdmissionDate": "2020-12-01"
+  },
+  {
+      "StudentID": 1024,
+      "UniversityID": 1,
+      "Name": "Thomas Mueller",
+      "DOB": "2001-10-09",
+      "AdmissionDate": "2018-07-15"
+  },
+  {
+      "StudentID": 1025,
+      "UniversityID": 1,
+      "Name": "Anna Kowalski",
+      "DOB": "2002-05-17",
+      "AdmissionDate": "2021-03-10"
+  },
+  {
+      "StudentID": 1026,
+      "UniversityID": 1,
+      "Name": "Marcus Johnson",
+      "DOB": "2001-07-23",
+      "AdmissionDate": "2019-11-20"
+  },
+  {
+      "StudentID": 1027,
+      "UniversityID": 1,
+      "Name": "Sara Ali",
+      "DOB": "2002-01-05",
+      "AdmissionDate": "2020-04-15"
+  },
+  {
+      "StudentID": 1028,
+      "UniversityID": 1,
+      "Name": "Ivan Petrov",
+      "DOB": "2001-11-14",
+      "AdmissionDate": "2018-10-01"
+  },
+  {
+      "StudentID": 1029,
+      "UniversityID": 1,
+      "Name": "Maya Rodriguez",
+      "DOB": "2002-06-09",
+      "AdmissionDate": "2021-06-25"
+  },
+  {
+      "StudentID": 1030,
+      "UniversityID": 1,
+      "Name": "Kwame Osei",
+      "DOB": "2001-04-22",
+      "AdmissionDate": "2019-02-15"
+  }
+]
