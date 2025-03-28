@@ -2,8 +2,8 @@
 session_start();
 require_once __DIR__ . '/../db_connection.php';
 
-// Check university authentication
-if (!isset($_SESSION['university_id'])){
+// Check if university is logged in and approved
+if (!isset($_SESSION['university_id']) || $_SESSION['accreditation_status'] !== 'Approved') {
     header("Location: ../login.php");
     exit();
 }
@@ -12,139 +12,137 @@ $universityID = $_SESSION['university_id'];
 $dbConnection = new DBConnection();
 $db = $dbConnection->getConnection();
 
-// Handle form submissions
+// Handle search
+$searchFacultyID = '';
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['search'])) {
+    $searchFacultyID = $_GET['faculty_id'];
+}
+
+// Handle research project operations
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Add/Update Research Project
-    if (isset($_POST['save_project'])) {
-        $projectID = $_POST['project_id'] ?? null;
+    if (isset($_POST['add_research'])) {
         $title = $_POST['title'];
         $startDate = $_POST['start_date'];
         $endDate = $_POST['end_date'] ?? null;
-        $status = $_POST['status'];
-        $supervisorID = $_POST['supervisor_id'] ?? null;
-        $researcherIDs = $_POST['researcher_ids'] ?? [];
+        $status = 'Ongoing'; // Default status
+        $facultyIDs = $_POST['faculty_ids'] ?? [];
 
-        try {
-            $db->begin_transaction();
-
-            // Insert/Update Project
-            if ($projectID) {
-                $stmt = $db->prepare("UPDATE ResearchProject SET 
-                    Title = ?, StartDate = ?, EndDate = ?, Status = ?
-                    WHERE ProjectID = ? AND UniversityID = ?");
-                $stmt->bind_param("ssssii", $title, $startDate, $endDate, $status, $projectID, $universityID);
-            } else {
-                $stmt = $db->prepare("INSERT INTO ResearchProject 
-                    (UniversityID, Title, StartDate, EndDate, Status)
-                    VALUES (?, ?, ?, ?, ?)");
-                $stmt->bind_param("issss", $universityID, $title, $startDate, $endDate, $status);
-            }
-            $stmt->execute();
-            $projectID = $projectID ?: $stmt->insert_id;
-
-            // Update faculty associations
-            if ($projectID) {
-                // Remove existing associations
-                $db->query("DELETE FROM fac_research WHERE ProjectID = $projectID");
+        // Validate inputs
+        if (empty($title) || empty($startDate)) {
+            $_SESSION['error'] = "Title and Start Date are required!";
+        } else {
+            // Insert new research project
+            $query = "INSERT INTO ResearchProject 
+                     (UniversityID, Title, StartDate, EndDate, Status)
+                     VALUES (?, ?, ?, ?, ?)";
+            $stmt = $db->prepare($query);
+            $stmt->bind_param("issss", $universityID, $title, $startDate, $endDate, $status);
+            
+            if ($stmt->execute()) {
+                $projectID = $stmt->insert_id;
                 
-                // Add supervisor if selected
-                if ($supervisorID) {
-                    $stmt = $db->prepare("INSERT INTO fac_research (ProjectID, FacultyID, Role) VALUES (?, ?, 'Supervisor')");
-                    $stmt->bind_param("ii", $projectID, $supervisorID);
-                    $stmt->execute();
-                }
-                
-                // Add researchers if selected
-                if (!empty($researcherIDs)) {
-                    $stmt = $db->prepare("INSERT INTO fac_research (ProjectID, FacultyID, Role) VALUES (?, ?, 'Researcher')");
-                    foreach ($researcherIDs as $researcherID) {
-                        if ($researcherID != $supervisorID) { // Ensure supervisor isn't added again
-                            $stmt->bind_param("ii", $projectID, $researcherID);
-                            $stmt->execute();
-                        }
+                // Insert faculty associations
+                if (!empty($facultyIDs)) {
+                    $facultyQuery = "INSERT INTO fac_research (ProjectID, FacultyID) VALUES (?, ?)";
+                    $facultyStmt = $db->prepare($facultyQuery);
+                    
+                    foreach ($facultyIDs as $facultyID) {
+                        $facultyStmt->bind_param("ii", $projectID, $facultyID);
+                        $facultyStmt->execute();
                     }
                 }
-            }
-
-            $db->commit();
-            $_SESSION['message'] = "Project " . ($projectID ? "updated" : "created") . " successfully!";
-        } catch (Exception $e) {
-            $db->rollback();
-            $_SESSION['error'] = "Error: " . $e->getMessage();
-        }
-    }
-    // Add Faculty Member
-    elseif (isset($_POST['add_faculty'])) {
-        $name = $_POST['name'];
-        $qualifications = $_POST['qualifications'];
-        $type = $_POST['type'];
-        $teachingExp = $_POST['teaching_exp'] ?? null;
-        $researchExp = $_POST['research_exp'] ?? null;
-        $researchArea = $_POST['research_area'] ?? null;
-        $publications = $_POST['publications'] ?? null;
-
-        try {
-            $db->begin_transaction();
-            
-            // Insert into Faculty
-            $stmt = $db->prepare("INSERT INTO Faculty (Name, Qualifications) VALUES (?, ?)");
-            $stmt->bind_param("ss", $name, $qualifications);
-            $stmt->execute();
-            $facultyID = $stmt->insert_id;
-
-            // Insert into specialization
-            if ($type === 'professor') {
-                $stmt = $db->prepare("INSERT INTO Professor (FacultyID, TeachingExperience) VALUES (?, ?)");
-                $stmt->bind_param("ii", $facultyID, $teachingExp);
-            } elseif ($type === 'supervisor') {
-                $stmt = $db->prepare("INSERT INTO Supervisor (FacultyID, ResearchExperience) VALUES (?, ?)");
-                $stmt->bind_param("ii", $facultyID, $researchExp);
+                
+                $_SESSION['message'] = "Research project added successfully!";
             } else {
-                $stmt = $db->prepare("INSERT INTO Researcher (FacultyID, ResearchArea, NumberOfPublications) VALUES (?, ?, ?)");
-                $stmt->bind_param("isi", $facultyID, $researchArea, $publications);
+                $_SESSION['error'] = "Error adding research project: " . $db->error;
             }
-            $stmt->execute();
-
-            $db->commit();
-            $_SESSION['message'] = "Faculty member added successfully!";
-        } catch (Exception $e) {
-            $db->rollback();
-            $_SESSION['error'] = "Error adding faculty: " . $e->getMessage();
+        }
+    } elseif (isset($_POST['update_status'])) {
+        $projectID = $_POST['project_id'];
+        $status = $_POST['status'];
+        
+        // Update research project status
+        $query = "UPDATE ResearchProject SET Status = ? 
+                 WHERE ProjectID = ? AND UniversityID = ?";
+        $stmt = $db->prepare($query);
+        $stmt->bind_param("sii", $status, $projectID, $universityID);
+        
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Research project status updated successfully!";
+        } else {
+            $_SESSION['error'] = "Error updating research project: " . $db->error;
+        }
+    } elseif (isset($_POST['delete_project'])) {
+        $projectID = $_POST['project_id'];
+        
+        // First check if status is Ongoing
+        $checkQuery = "SELECT Status FROM ResearchProject 
+                      WHERE ProjectID = ? AND UniversityID = ?";
+        $checkStmt = $db->prepare($checkQuery);
+        $checkStmt->bind_param("ii", $projectID, $universityID);
+        $checkStmt->execute();
+        $result = $checkStmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            if ($row['Status'] === 'Ongoing') {
+                // First delete faculty associations
+                $deleteFacQuery = "DELETE FROM fac_research WHERE ProjectID = ?";
+                $deleteFacStmt = $db->prepare($deleteFacQuery);
+                $deleteFacStmt->bind_param("i", $projectID);
+                $deleteFacStmt->execute();
+                
+                // Then delete the project
+                $deleteQuery = "DELETE FROM ResearchProject WHERE ProjectID = ? AND UniversityID = ?";
+                $deleteStmt = $db->prepare($deleteQuery);
+                $deleteStmt->bind_param("ii", $projectID, $universityID);
+                
+                if ($deleteStmt->execute()) {
+                    $_SESSION['message'] = "Research project deleted successfully!";
+                } else {
+                    $_SESSION['error'] = "Error deleting research project: " . $db->error;
+                }
+            } else {
+                $_SESSION['error'] = "Only Ongoing projects can be deleted!";
+            }
+        } else {
+            $_SESSION['error'] = "Project not found or doesn't belong to your university!";
         }
     }
 }
 
-// Fetch data
-$projects = $db->query("
-    SELECT * FROM ResearchProject 
-    WHERE UniversityID = $universityID
-    ORDER BY Status, StartDate DESC
-")->fetch_all(MYSQLI_ASSOC);
+// I am using view based query below to optimize the query and get all faculty names in a single row
+$projects = [];
+$query = "SELECT * FROM vw_research_projects_with_faculty
+          WHERE UniversityID = ? " . 
+          (!empty($searchFacultyID) ? " AND ProjectID IN (
+              SELECT ProjectID FROM fac_research WHERE FacultyID = ?
+          )" : "") . "
+          ORDER BY StartDate DESC";
 
-$faculty = $db->query("
-    SELECT f.*, 
-    CASE 
-        WHEN p.FacultyID IS NOT NULL THEN 'Professor'
-        WHEN s.FacultyID IS NOT NULL THEN 'Supervisor'
-        ELSE 'Researcher'
-    END AS Type,
-    p.TeachingExperience,
-    s.ResearchExperience,
-    r.ResearchArea, r.NumberOfPublications
-    FROM Faculty f
-    LEFT JOIN Professor p ON f.FacultyID = p.FacultyID
-    LEFT JOIN Supervisor s ON f.FacultyID = s.FacultyID
-    LEFT JOIN Researcher r ON f.FacultyID = r.FacultyID
-")->fetch_all(MYSQLI_ASSOC);
+$stmt = $db->prepare($query);
 
-// Prepare faculty data for JavaScript
-$facultyJson = json_encode(array_map(function($member) {
-    return [
-        'id' => $member['FacultyID'],
-        'name' => $member['Name'],
-        'type' => $member['Type']
-    ];
-}, $faculty));
+if (!empty($searchFacultyID)) {
+    $stmt->bind_param("ii", $universityID, $searchFacultyID);
+} else {
+    $stmt->bind_param("i", $universityID);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $projects[] = $row;
+}
+
+// Fetch all faculties for the dropdown
+$faculties = [];
+$facultyQuery = "SELECT FacultyID, Name FROM Faculty ORDER BY Name";
+$facultyStmt = $db->prepare($facultyQuery);
+$facultyStmt->execute();
+$facultyResult = $facultyStmt->get_result();
+while ($row = $facultyResult->fetch_assoc()) {
+    $faculties[] = $row;
+}
 ?>
 
 <!DOCTYPE html>
@@ -152,399 +150,335 @@ $facultyJson = json_encode(array_map(function($member) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Research Management</title>
+    <title>Research Project Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .card { margin-bottom: 20px; }
-        .table-hover tbody tr:hover { background-color: #f8f9fa; }
-        .status-ongoing { color: #ffc107; font-weight: bold; }
-        .status-published { color: #28a745; font-weight: bold; }
-        .status-rejected { color: #dc3545; font-weight: bold; }
-        .badge-supervisor { background-color: #6f42c1; }
-        .badge-researcher { background-color: #20c997; }
-        .badge-professor { background-color: #fd7e14; }
-        .role-chip { 
-            display: inline-block; 
-            padding: 0.25em 0.4em; 
-            font-size: 75%; 
-            font-weight: 700; 
-            line-height: 1; 
-            text-align: center; 
-            white-space: nowrap; 
-            vertical-align: baseline; 
-            border-radius: 0.25rem; 
-            margin-right: 0.3rem;
+        .form-container {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 0.5rem;
+        .highlight {
+            background-color: #fffde7;
+        }
+        .status-ongoing { color: #28a745; }
+        .status-published { color: #007bff; }
+        .status-rejected { color: #dc3545; }
+        .selected-faculties {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        .selected-faculty {
+            display: inline-block;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            padding: 2px 5px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
 <?php include 'navbar-management.php'; ?>
 
-<div class="container py-4">
-    <!-- Messages -->
-    <?php include 'messages.php'; ?>
-
-    <!-- Research Projects Section -->
-    <div class="card">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Research Projects</h4>
-            <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#projectModal">
-                <i class="fas fa-plus me-1"></i> Add Project
-            </button>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Title</th>
-                            <th>Duration</th>
-                            <th>Status</th>
-                            <th>Team</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($projects as $project): 
-                            $members = $db->query("
-                                SELECT f.FacultyID, f.Name, fr.Role 
-                                FROM fac_research fr
-                                JOIN Faculty f ON fr.FacultyID = f.FacultyID
-                                WHERE fr.ProjectID = {$project['ProjectID']}
-                                ORDER BY fr.Role DESC, f.Name
-                            ")->fetch_all(MYSQLI_ASSOC);
-                            
-                            $supervisor = array_filter($members, fn($m) => $m['Role'] === 'Supervisor');
-                            $researchers = array_filter($members, fn($m) => $m['Role'] === 'Researcher');
-                        ?>
-                        <tr>
-                            <td><?= $project['ProjectID'] ?></td>
-                            <td><?= htmlspecialchars($project['Title']) ?></td>
-                            <td>
-                                <?= date('M Y', strtotime($project['StartDate'])) ?> - 
-                                <?= $project['EndDate'] ? date('M Y', strtotime($project['EndDate'])) : 'Present' ?>
-                            </td>
-                            <td class="status-<?= strtolower($project['Status']) ?>">
-                                <?= $project['Status'] ?>
-                            </td>
-                            <td>
-                                <?php foreach ($supervisor as $sup): ?>
-                                    <span class="role-chip badge-supervisor" title="Supervisor">
-                                        <i class="fas fa-user-tie me-1"></i><?= htmlspecialchars($sup['Name']) ?>
-                                    </span>
-                                <?php endforeach; ?>
-                                <?php foreach ($researchers as $res): ?>
-                                    <span class="role-chip badge-researcher" title="Researcher">
-                                        <i class="fas fa-flask me-1"></i><?= htmlspecialchars($res['Name']) ?>
-                                    </span>
-                                <?php endforeach; ?>
-                                <?php if (empty($members)): ?>
-                                    <span class="text-muted">No team members</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-primary edit-project" 
-                                            data-project='<?= htmlentities(json_encode($project)) ?>'
-                                            data-supervisor='<?= $supervisor ? json_encode(array_values($supervisor)[0]['FacultyID']) : 'null' ?>'
-                                            data-researchers='<?= json_encode(array_column($researchers, 'FacultyID')) ?>'>
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger delete-project" 
-                                            data-id="<?= $project['ProjectID'] ?>">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Faculty Section -->
-    <div class="card">
-        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Faculty Members</h4>
-            <button class="btn btn-light" data-bs-toggle="modal" data-bs-target="#facultyModal">
-                <i class="fas fa-user-plus me-1"></i> Add Faculty
-            </button>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Specialization</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($faculty as $member): ?>
-                        <tr>
-                            <td><?= $member['FacultyID'] ?></td>
-                            <td><?= htmlspecialchars($member['Name']) ?></td>
-                            <td>
-                                <?php if ($member['Type'] === 'Supervisor'): ?>
-                                    <span class="badge badge-supervisor">Supervisor</span>
-                                <?php elseif ($member['Type'] === 'Professor'): ?>
-                                    <span class="badge badge-professor">Professor</span>
-                                <?php else: ?>
-                                    <span class="badge badge-researcher">Researcher</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?php if ($member['Type'] === 'Supervisor'): ?>
-                                    <?= $member['ResearchExperience'] ?> years research experience
-                                <?php elseif ($member['Type'] === 'Professor'): ?>
-                                    <?= $member['TeachingExperience'] ?> years teaching experience
-                                <?php else: ?>
-                                    <?= $member['ResearchArea'] ?> (<?= $member['NumberOfPublications'] ?> publications)
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Project Modal -->
-<div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form method="POST">
-                <input type="hidden" name="project_id" id="projectId">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="projectModalLabel">Manage Research Project</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-8">
-                            <label class="form-label">Title *</label>
-                            <input type="text" class="form-control" name="title" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Status *</label>
-                            <select class="form-select" name="status" required>
-                                <option value="Ongoing">Ongoing</option>
-                                <option value="Published">Published</option>
-                                <option value="Rejected">Rejected</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Start Date *</label>
-                            <input type="date" class="form-control" name="start_date" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">End Date</label>
-                            <input type="date" class="form-control" name="end_date">
-                            <small class="text-muted">Leave empty for ongoing projects</small>
-                        </div>
-                        
-                        <div class="col-md-12">
-                            <hr>
-                            <h5>Project Team</h5>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <label class="form-label">Supervisor</label>
-                            <select class="form-select" name="supervisor_id" id="supervisorSelect">
-                                <option value="">Select Supervisor</option>
-                                <?php foreach ($faculty as $member): 
-                                    if ($member['Type'] === 'Supervisor' || $member['Type'] === 'Professor'): ?>
-                                    <option value="<?= $member['FacultyID'] ?>" data-type="<?= $member['Type'] ?>">
-                                        <?= htmlspecialchars($member['Name']) ?> (<?= $member['Type'] ?>)
-                                    </option>
-                                    <?php endif; 
-                                endforeach; ?>
-                            </select>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <label class="form-label">Researchers</label>
-                            <select class="form-select" name="researcher_ids[]" id="researcherSelect" multiple>
-                                <?php foreach ($faculty as $member): ?>
-                                <option value="<?= $member['FacultyID'] ?>" data-type="<?= $member['Type'] ?>">
-                                    <?= htmlspecialchars($member['Name']) ?> (<?= $member['Type'] ?>)
-                                </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <small class="text-muted">Hold Ctrl/Cmd to select multiple</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" name="save_project" class="btn btn-primary">Save Project</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Faculty Modal -->
-<div class="modal fade" id="facultyModal" tabindex="-1" aria-labelledby="facultyModalLabel" aria-hidden="true">
+<!-- Edit Status Modal -->
+<div class="modal fade" id="editStatusModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST">
-                <div class="modal-header bg-secondary text-white">
-                    <h5 class="modal-title" id="facultyModalLabel">Add Faculty Member</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Research Project Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="project_id" id="modalProjectId">
                     <div class="mb-3">
-                        <label class="form-label">Name *</label>
-                        <input type="text" class="form-control" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Qualifications</label>
-                        <textarea class="form-control" name="qualifications" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Type *</label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="type" value="professor" id="typeProfessor" required>
-                            <label class="form-check-label" for="typeProfessor">Professor</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="type" value="supervisor" id="typeSupervisor">
-                            <label class="form-check-label" for="typeSupervisor">Supervisor</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="type" value="researcher" id="typeResearcher">
-                            <label class="form-check-label" for="typeResearcher">Researcher</label>
-                        </div>
-                    </div>
-                    <div id="professorFields" class="d-none">
-                        <div class="mb-3">
-                            <label class="form-label">Teaching Experience (years) *</label>
-                            <input type="number" class="form-control" name="teaching_exp" min="0">
-                        </div>
-                    </div>
-                    <div id="supervisorFields" class="d-none">
-                        <div class="mb-3">
-                            <label class="form-label">Research Experience (years) *</label>
-                            <input type="number" class="form-control" name="research_exp" min="0">
-                        </div>
-                    </div>
-                    <div id="researcherFields" class="d-none">
-                        <div class="mb-3">
-                            <label class="form-label">Research Area *</label>
-                            <input type="text" class="form-control" name="research_area">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Number of Publications *</label>
-                            <input type="number" class="form-control" name="publications" min="0">
-                        </div>
+                        <label class="form-label">Status</label>
+                        <select class="form-select" name="status" id="modalStatus" required>
+                            <option value="Ongoing">Ongoing</option>
+                            <option value="Published">Published</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" name="add_faculty" class="btn btn-primary">Add Faculty</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" name="update_status" class="btn btn-primary">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="project_id" id="deleteProjectId">
+                    <p>Are you sure you want to delete this research project? This action cannot be undone.</p>
+                    <p class="fw-bold">Only Ongoing projects can be deleted.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="delete_project" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-flask me-2"></i>Research Project Management</h1>
+        <a href="../dashboard.php" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+    
+    <?php if (isset($_SESSION['message'])): ?>
+        <div class="alert alert-success alert-dismissible fade show">
+            <?= $_SESSION['message'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['message']); ?>
+    <?php endif; ?>
+    
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger alert-dismissible fade show">
+            <?= $_SESSION['error'] ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+    
+    <div class="row">
+        <!-- Research Project Form -->
+        <div class="col-md-4">
+            <div class="form-container">
+                <h3><i class="fas fa-plus-circle me-2"></i>Add New Research Project</h3>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Title *</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Start Date *</label>
+                        <input type="date" class="form-control" name="start_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" class="form-control" name="end_date">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Faculty Members</label>
+                        <select class="form-select" id="facultySelect" multiple>
+                            <?php foreach ($faculties as $faculty): ?>
+                                <option value="<?= $faculty['FacultyID'] ?>"><?= htmlspecialchars($faculty['Name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="selected-faculties" id="selectedFaculties">
+                            <small class="text-muted">Selected faculty will appear here</small>
+                        </div>
+                        <input type="hidden" name="faculty_ids[]" id="facultyIds">
+                    </div>
+                    <button type="submit" name="add_research" class="btn btn-primary w-100">
+                        <i class="fas fa-save me-2"></i>Save Project
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Research Projects List -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Research Projects</h5>
+                        <form method="GET" class="input-group" style="width: 300px;">
+                            <select class="form-select" name="faculty_id">
+                                <option value="">Search by Faculty</option>
+                                <?php foreach ($faculties as $faculty): ?>
+                                    <option value="<?= $faculty['FacultyID'] ?>" <?= ($searchFacultyID == $faculty['FacultyID']) ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($faculty['Name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button class="btn btn-light" type="submit" name="search">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <?php if (!empty($searchFacultyID)): ?>
+                                <a href="research_manage.php" class="btn btn-outline-light ms-2">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            <?php endif; ?>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Status</th>
+                                    <th>Faculty</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($projects)): ?>
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                            No research projects found
+                                            <?php if (!empty($searchFacultyID)): ?>
+                                                for selected faculty
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($projects as $project): ?>
+                                    <tr>
+                                        <td><?= $project['ProjectID'] ?></td>
+                                        <td><?= htmlspecialchars($project['Title']) ?></td>
+                                        <td><?= date('M d, Y', strtotime($project['StartDate'])) ?></td>
+                                        <td><?= $project['EndDate'] ? date('M d, Y', strtotime($project['EndDate'])) : 'N/A' ?></td>
+                                        <td class="status-<?= strtolower($project['Status']) ?>">
+                                            <?= $project['Status'] ?>
+                                        </td>
+                                        <td>
+                                            <?= $project['FacultyNames'] ? htmlspecialchars($project['FacultyNames']) : 'None' ?>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary edit-btn" 
+                                                    data-id="<?= $project['ProjectID'] ?>" 
+                                                    data-status="<?= $project['Status'] ?>">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                            <?php if ($project['Status'] === 'Ongoing'): ?>
+                                                <button class="btn btn-sm btn-danger delete-btn" 
+                                                        data-id="<?= $project['ProjectID'] ?>">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(document).ready(function() {
-    const facultyData = <?= $facultyJson ?>;
-    
-    // Initialize Select2 for researcher selection
-    $('#researcherSelect').select2({
-        theme: 'bootstrap-5',
-        width: '100%',
-        placeholder: 'Select researchers',
-        allowClear: true
-    });
-    
-    // Project Modal Handling
-    $('.edit-project').click(function() {
-        const project = JSON.parse($(this).data('project'));
-        const supervisorId = $(this).data('supervisor');
-        const researcherIds = $(this).data('researchers');
+    $(document).ready(function() {
+        // Faculty selection handling
+        const facultySelect = $('#facultySelect');
+        const selectedFaculties = $('#selectedFaculties');
+        const facultyIdsInput = $('#facultyIds');
         
-        $('#projectId').val(project.ProjectID);
-        $('[name="title"]').val(project.Title);
-        $('[name="start_date"]').val(project.StartDate);
-        $('[name="end_date"]').val(project.EndDate);
-        $('[name="status"]').val(project.Status);
+        let selectedFacultyMap = {};
         
-        // Set supervisor
-        if (supervisorId && supervisorId !== 'null') {
-            $('#supervisorSelect').val(supervisorId).trigger('change');
-        }
+        facultySelect.on('change', function() {
+            const selectedOptions = $(this).val() || [];
+            selectedFacultyMap = {};
+            
+            // Clear and rebuild the display
+            selectedFaculties.empty();
+            
+            if (selectedOptions.length === 0) {
+                selectedFaculties.append('<small class="text-muted">Selected faculty will appear here</small>');
+                facultyIdsInput.val('');
+                return;
+            }
+            
+            // Build the faculty IDs array and display
+            const facultyIds = [];
+            facultySelect.find('option').each(function() {
+                if (selectedOptions.includes(this.value)) {
+                    const facultyId = this.value;
+                    const facultyName = $(this).text();
+                    selectedFacultyMap[facultyId] = facultyName;
+                    facultyIds.push(facultyId);
+                    
+                    selectedFaculties.append(
+                        `<span class="selected-faculty" data-id="${facultyId}">
+                            ${facultyName} <i class="fas fa-times remove-faculty"></i>
+                        </span>`
+                    );
+                }
+            });
+            
+            facultyIdsInput.val(facultyIds.join(','));
+        });
         
-        // Set researchers
-        if (researcherIds && researcherIds.length > 0) {
-            $('#researcherSelect').val(researcherIds).trigger('change');
-        }
+        // Remove faculty from selection
+        selectedFaculties.on('click', '.remove-faculty', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const facultyItem = $(this).closest('.selected-faculty');
+            const facultyId = facultyItem.data('id');
+            
+            // Remove from map
+            delete selectedFacultyMap[facultyId];
+            
+            // Update the select element
+            facultySelect.find(`option[value="${facultyId}"]`).prop('selected', false);
+            
+            // Update the display
+            facultyItem.remove();
+            
+            // Update the hidden input
+            facultyIdsInput.val(Object.keys(selectedFacultyMap).join(','));
+            
+            if (Object.keys(selectedFacultyMap).length === 0) {
+                selectedFaculties.append('<small class="text-muted">Selected faculty will appear here</small>');
+            }
+        });
         
-        $('#projectModal').modal('show');
+        // Edit button click handler
+        $('.edit-btn').click(function() {
+            const projectId = $(this).data('id');
+            const currentStatus = $(this).data('status');
+            
+            $('#modalProjectId').val(projectId);
+            $('#modalStatus').val(currentStatus);
+            $('#editStatusModal').modal('show');
+        });
+        
+        // Delete button click handler
+        $('.delete-btn').click(function() {
+            const projectId = $(this).data('id');
+            $('#deleteProjectId').val(projectId);
+            $('#deleteModal').modal('show');
+        });
+        
+        // Highlight row on hover
+        $('tbody tr').hover(
+            function() { $(this).addClass('highlight'); },
+            function() { $(this).removeClass('highlight'); }
+        );
     });
-
-    // Faculty Type Toggle
-    $('input[name="type"]').change(function() {
-        $('#professorFields, #supervisorFields, #researcherFields').addClass('d-none');
-        if ($(this).val() === 'professor') {
-            $('#professorFields').removeClass('d-none');
-        } else if ($(this).val() === 'supervisor') {
-            $('#supervisorFields').removeClass('d-none');
-        } else {
-            $('#researcherFields').removeClass('d-none');
-        }
-    });
-
-    // Delete Project
-    $('.delete-project').click(function() {
-        if (confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
-            const projectID = $(this).data('id');
-            window.location = `delete_project.php?id=${projectID}`;
-        }
-    });
-    
-    // Prevent selecting same person as supervisor and researcher
-    $('#supervisorSelect').change(function() {
-        const selectedSupervisor = $(this).val();
-        if (selectedSupervisor) {
-            $('#researcherSelect option[value="' + selectedSupervisor + '"]').prop('disabled', true);
-        } else {
-            $('#researcherSelect option').prop('disabled', false);
-        }
-        $('#researcherSelect').trigger('change');
-    });
-    
-    // Initialize modal fields when shown
-    $('#projectModal').on('show.bs.modal', function() {
-        $('#projectId').val('');
-        $('[name="title"]').val('');
-        $('[name="start_date"]').val('');
-        $('[name="end_date"]').val('');
-        $('[name="status"]').val('Ongoing');
-        $('#supervisorSelect').val('').trigger('change');
-        $('#researcherSelect').val(null).trigger('change');
-    });
-});
 </script>
 </body>
 </html>

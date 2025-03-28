@@ -97,7 +97,7 @@ $approvalStatus = $university['AccreditationStatus'];
                         <a class="nav-link active" href="dashboard.php">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Reports</a>
+                        <a class="nav-link" href="report.php">Reports</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Settings</a>
