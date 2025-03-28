@@ -78,7 +78,7 @@ if ($result) {
     </style>
 </head>
 <body>
-    <?php include 'components/navbar.php'; ?>
+<?php include 'navbar-admin.php'; ?>
     
     <div class="container py-5">
         <a href="admin.php" class="btn btn-secondary back-btn">

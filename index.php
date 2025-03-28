@@ -113,8 +113,8 @@
                 <div class="col-md-4">
                     <div class="feature-box bg-light">
                         <i class="fas fa-book fa-3x text-primary mb-3"></i>
-                        <h4>Course Management</h4>
-                        <p>Organize courses, schedules, and curriculum efficiently.</p>
+                        <h4>Accreditation Application</h4>
+                        <p>Apply, manage and track your accreditation status.</p>
                     </div>
                 </div>
             </div>

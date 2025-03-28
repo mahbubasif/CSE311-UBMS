@@ -77,7 +77,7 @@ $fundings = $result->fetch_all(MYSQLI_ASSOC);
     </style>
 </head>
 <body>
-<?php include '../components/admin_navbar.php'; ?>
+<?php include 'navbar-admin.php'; ?>
     
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">

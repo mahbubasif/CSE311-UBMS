@@ -97,10 +97,7 @@ $approvalStatus = $university['AccreditationStatus'];
                         <a class="nav-link active" href="dashboard.php">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="report.php">Reports</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Settings</a>
+                        <a class="nav-link" href="reports.php">View Reports</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
@@ -227,54 +224,7 @@ $approvalStatus = $university['AccreditationStatus'];
             <?php endforeach; ?>
         </div>
 
-        <!-- Quick Stats (Only shown if approved) -->
-        <?php if ($approvalStatus === 'Approved'): ?>
-        <div class="row mt-5">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-users me-2"></i>Total Students</h5>
-                        <h2 class="text-primary">1,245</h2>
-                        <p class="text-muted">5% increase from last month</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-chalkboard-teacher me-2"></i>Total Faculty</h5>
-                        <h2 class="text-primary">85</h2>
-                        <p class="text-muted">2 new faculty members</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><i class="fas fa-book me-2"></i>Total Courses</h5>
-                        <h2 class="text-primary">62</h2>
-                        <p class="text-muted">3 new courses this semester</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
-    </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5><?php echo htmlspecialchars($universityName); ?> Management System</h5>
-                    <p>Comprehensive university administration solution</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-0">&copy; <?php echo date("Y"); ?> All rights reserved</p>
-                </div>
-            </div>
-        </div>
-    </footer>
 
     <!-- Bootstrap 5 JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
