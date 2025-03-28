@@ -195,6 +195,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_student'])) {
             </div>
         </div>
     </div>
+    <!-- Edit Student Modal -->
+<div class="modal fade" id="editStudentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit Student</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editStudentForm">
+                <div class="modal-body">
+                    <input type="hidden" name="student_id" id="edit_student_id">
+                    <div class="mb-3">
+                        <label for="edit_name" class="form-label">Full Name *</label>
+                        <input type="text" class="form-control" id="edit_name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_dob" class="form-label">Date of Birth *</label>
+                        <input type="date" class="form-control" id="edit_dob" name="dob" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_admission_date" class="form-label">Admission Date *</label>
+                        <input type="date" class="form-control" id="edit_admission_date" name="admission_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_department_id" class="form-label">Department *</label>
+                        <select class="form-select" id="edit_department_id" name="department_id" required>
+                            <?php foreach ($departments as $id => $name): ?>
+                                <option value="<?php echo $id; ?>"><?php echo htmlspecialchars($name); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -269,6 +309,73 @@ $('#student_id').on('blur', function() {
                 });
             }
         });
+        // Edit Student
+$(document).on('click', '.edit-btn', function() {
+    const studentID = $(this).data('id');
+    
+    $.ajax({
+        url: 'fetch_student.php',
+        type: 'GET',
+        data: { student_id: studentID },
+        success: function(response) {
+            if (response.error) {
+                alert(response.error);
+            } else {
+                $('#edit_student_id').val(response.StudentID);
+                $('#edit_name').val(response.Name);
+                $('#edit_dob').val(response.DOB);
+                $('#edit_admission_date').val(response.AdmissionDate);
+                $('#edit_department_id').val(response.DepartmentID);
+                $('#editStudentModal').modal('show');
+            }
+        },
+        dataType: 'json'
+    });
+});
+
+// Update Student
+$('#editStudentForm').submit(function(e) {
+    e.preventDefault();
+    const formData = $(this).serialize();
+    
+    $.ajax({
+        url: 'update_student.php',
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+            if (response.success) {
+                $('#editStudentModal').modal('hide');
+                loadStudents($('#searchInput').val());
+                alert('Student updated successfully!');
+            } else {
+                alert('Error: ' + response.error);
+            }
+        },
+        dataType: 'json'
+    });
+});
+
+// Delete Student
+$(document).on('click', '.delete-btn', function() {
+    const studentID = $(this).data('id');
+    
+    if (confirm('Are you sure you want to delete this student?')) {
+        $.ajax({
+            url: 'delete_student.php',
+            type: 'POST',
+            data: { student_id: studentID },
+            success: function(response) {
+                if (response.success) {
+                    loadStudents($('#searchInput').val());
+                    alert('Student deleted successfully!');
+                } else {
+                    alert('Error: ' + response.error);
+                }
+            },
+            dataType: 'json'
+        });
+    }
+});
     </script>
 </body>
 </html>

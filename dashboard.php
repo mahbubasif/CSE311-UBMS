@@ -158,35 +158,41 @@ $approvalStatus = $university['AccreditationStatus'];
                     'desc' => 'Handle faculty information, course assignments, and schedules.',
                     'link' => 'management/faculty_manage.php'
                 ],
-                  [
-                      'icon' => 'building',
-                      'title' => 'Department Management',
-                      'desc' => 'Create and manage university departments and programs.',
-                      'link' => 'management/dept_manage.php'
-                  ],
+                [
+                    'icon' => 'building',
+                    'title' => 'Department Management',
+                    'desc' => 'Create and manage university departments and programs.',
+                    'link' => 'management/dept_manage.php'
+                ],
                 [
                     'icon' => 'book',
-                    'title' => 'Course Management',
-                    'desc' => 'Organize courses, curriculum, and class schedules.',
-                    'link' => 'courses.php'
+                    'title' => 'Curriculum Management',
+                    'desc' => 'Develop and manage course curricula and educational programs.',
+                    'link' => 'management/curriculum_manage.php'
                 ],
                 [
                     'icon' => 'clipboard-check',
-                    'title' => 'Attendance System',
-                    'desc' => 'Track and manage student and faculty attendance records.',
-                    'link' => 'attendance.php'
-                ],
-                [
-                    'icon' => 'file-alt',
-                    'title' => 'Examination System',
-                    'desc' => 'Manage exams, grades, and academic results.',
-                    'link' => 'exams.php'
+                    'title' => 'Academic Records',
+                    'desc' => 'Track and manage student academic records status. ',
+                    'link' => 'management/academic_records.php'
                 ],
                 [
                     'icon' => 'money-bill-wave',
-                    'title' => 'Financial Management',
-                    'desc' => 'Handle fees, payments, and university finances.',
-                    'link' => 'finance.php'
+                    'title' => 'Funding Management',
+                    'desc' => 'Apply and manage funding',
+                    'link' => 'management/funding_manage.php'
+                ],
+                [
+                    'icon' => 'graduation-cap',
+                    'title' => 'Scholarship Management',
+                    'desc' => 'Manage student scholarships and financial aid programs',
+                    'link' => 'management/scholarship_manage.php'
+                ],
+                [
+                    'icon' => 'flask',
+                    'title' => 'Research Management',
+                    'desc' => 'Track and manage research projects, grants, and publications',
+                    'link' => 'management/research_manage.php'
                 ]
             ];
             

@@ -105,6 +105,54 @@ if (!isset($_SESSION['admin_logged_in'])) {
         </div>
     </div>
     
+    <!-- Funding Management Card -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card admin-card">
+            <div class="card-body text-center">
+                <div class="card-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <h3 class="card-title">Funding Management</h3>
+                <p class="card-text">Manage university funding and financial resources</p>
+                <a href="funding_manage-admin.php" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i> Manage
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Curriculum Management Card -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card admin-card">
+            <div class="card-body text-center">
+                <div class="card-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3 class="card-title">Curriculum Management</h3>
+                <p class="card-text">Manage university curricula and course offerings</p>
+                <a href="curriculum_manage-admin.php" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i> Manage
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ranking Management Card -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card admin-card">
+            <div class="card-body text-center">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="card-title">Ranking Management</h3>
+                <p class="card-text">Manage university rankings and performance metrics</p>
+                <a href="ranking_manage-admin.php" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i> Manage
+                </a>
+            </div>
+        </div>
+    </div>
+    
 </div>
             
             <!-- System Settings Card -->
