@@ -65,20 +65,10 @@ if ($db) {
     <title>Manage University Accreditation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .card {
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .status-pending { color: #FFC107; font-weight: bold; }
-        .status-approved { color: #28A745; font-weight: bold; }
-        .status-rejected { color: #DC3545; font-weight: bold; }
-        .table-responsive { max-height: 500px; overflow-y: auto; }
-        .back-btn { margin-bottom: 20px; }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <?php include 'components/navbar.php'; ?>
+    <?php include 'navbar-admin.php'; ?>
     
     <div class="container py-5">
         <a href="admin.php" class="btn btn-secondary back-btn">

@@ -1,0 +1,70 @@
+.admin-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  height: 100%;
+}
+.admin-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #0d6efd;
+}
+
+.login-container {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+.error-message {
+  color: #dc3545;
+  margin-top: 5px;
+}
+
+.card {
+  margin-bottom: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.status-pending { color: #FFC107; font-weight: bold; }
+.status-approved { color: #28A745; font-weight: bold; }
+.status-rejected { color: #DC3545; font-weight: bold; }
+.table-responsive { max-height: 500px; overflow-y: auto; }
+.back-btn { margin-bottom: 20px; }
+
+
+.stat-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  height: 100%;
+  border-radius: 10px;
+  border-left: 5px solid #0d6efd;
+}
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #0d6efd;
+}
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+}
+.header-section {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+.progress {
+  height: 10px;
+}
+.university-selector {
+  max-width: 400px;
+  margin: 0 auto 30px;
+}

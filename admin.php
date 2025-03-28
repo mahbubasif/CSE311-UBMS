@@ -21,24 +21,10 @@ if (!isset($_SESSION['admin_logged_in'])) {
     <title>Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .admin-card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            height: 100%;
-        }
-        .admin-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #0d6efd;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <?php include 'components/navbar.php'; ?>
+    <?php include 'navbar-admin.php'; ?>
     
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -71,32 +57,29 @@ if (!isset($_SESSION['admin_logged_in'])) {
                 </div>
             </div>
             
-            <!-- User Management Card -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card admin-card">
-                    <div class="card-body text-center">
-                        <div class="card-icon">
-                            <i class="fas fa-users-cog"></i>
-                        </div>
-                        <h3 class="card-title">User Management</h3>
-                        <p class="card-text">Manage system users and administrators</p>
-                        <a href="#" class="btn btn-primary">
-                            <i class="fas fa-arrow-right me-2"></i> Manage
-                        </a>
-                    </div>
+    <!-- Curriculum Management Card -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card admin-card">
+            <div class="card-body text-center">
+                <div class="card-icon">
+                    <i class="fas fa-book"></i>
                 </div>
+                <h3 class="card-title">Curriculum Application</h3>
+                <p class="card-text">Manage university curricula and course offerings</p>
+                <a href="curriculum_manage-admin.php" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i> Manage
+                </a>
             </div>
-
-            <div class="row g-4">
-    
-    <!-- Department Management Card -->
+        </div>
+    </div>
+                <!-- Department Management Card -->
     <div class="col-md-6 col-lg-4">
         <div class="card admin-card">
             <div class="card-body text-center">
                 <div class="card-icon">
                     <i class="fas fa-building"></i>
                 </div>
-                <h3 class="card-title">Department Management</h3>
+                <h3 class="card-title">Department Application</h3>
                 <p class="card-text">Manage department approvals and status</p>
                 <a href="dept_manage-admin.php" class="btn btn-primary">
                     <i class="fas fa-arrow-right me-2"></i> Manage
@@ -104,6 +87,10 @@ if (!isset($_SESSION['admin_logged_in'])) {
             </div>
         </div>
     </div>
+
+            <div class="row g-4">
+    
+
     
     <!-- Funding Management Card -->
     <div class="col-md-6 col-lg-4">
@@ -112,7 +99,7 @@ if (!isset($_SESSION['admin_logged_in'])) {
                 <div class="card-icon">
                     <i class="fas fa-money-bill-wave"></i>
                 </div>
-                <h3 class="card-title">Funding Management</h3>
+                <h3 class="card-title">Funding Application</h3>
                 <p class="card-text">Manage university funding and financial resources</p>
                 <a href="funding_manage-admin.php" class="btn btn-primary">
                     <i class="fas fa-arrow-right me-2"></i> Manage
@@ -121,21 +108,7 @@ if (!isset($_SESSION['admin_logged_in'])) {
         </div>
     </div>
     
-    <!-- Curriculum Management Card -->
-    <div class="col-md-6 col-lg-4">
-        <div class="card admin-card">
-            <div class="card-body text-center">
-                <div class="card-icon">
-                    <i class="fas fa-book"></i>
-                </div>
-                <h3 class="card-title">Curriculum Management</h3>
-                <p class="card-text">Manage university curricula and course offerings</p>
-                <a href="curriculum_manage-admin.php" class="btn btn-primary">
-                    <i class="fas fa-arrow-right me-2"></i> Manage
-                </a>
-            </div>
-        </div>
-    </div>
+
     
     <!-- Ranking Management Card -->
     <div class="col-md-6 col-lg-4">
@@ -144,7 +117,7 @@ if (!isset($_SESSION['admin_logged_in'])) {
                 <div class="card-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
-                <h3 class="card-title">Ranking Management</h3>
+                <h3 class="card-title">Publish Ranking</h3>
                 <p class="card-text">Manage university rankings and performance metrics</p>
                 <a href="ranking_manage-admin.php" class="btn btn-primary">
                     <i class="fas fa-arrow-right me-2"></i> Manage
@@ -153,23 +126,23 @@ if (!isset($_SESSION['admin_logged_in'])) {
         </div>
     </div>
     
-</div>
-            
-            <!-- System Settings Card -->
-            <div class="col-md-6 col-lg-4">
-                <div class="card admin-card">
-                    <div class="card-body text-center">
-                        <div class="card-icon">
-                            <i class="fas fa-cogs"></i>
-                        </div>
-                        <h3 class="card-title">System Settings</h3>
-                        <p class="card-text">Configure system-wide settings and preferences</p>
-                        <a href="#" class="btn btn-primary">
-                            <i class="fas fa-arrow-right me-2"></i> Configure
-                        </a>
-                    </div>
+    <!-- View Stats Card -->
+    <div class="col-md-6 col-lg-4">
+        <div class="card admin-card">
+            <div class="card-body text-center">
+                <div class="card-icon">
+                    <i class="fas fa-chart-bar"></i>
                 </div>
+                <h3 class="card-title">View Stats</h3>
+                <p class="card-text">View comprehensive statistics and analytics dashboard</p>
+                <a href="reports-admin.php" class="btn btn-primary">
+                    <i class="fas fa-arrow-right me-2"></i> View
+                </a>
             </div>
+        </div>
+    </div>
+    
+</div>
         </div>
     </div>
     

@@ -58,53 +58,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         FROM uni_fac
                         GROUP BY UniversityID) f ON u.UniversityID = f.UniversityID,
                   (SELECT @rank := 0) r
-                  ORDER BY (student_count/faculty_count) ASC"; // Lower ratio is better
+                  ORDER BY (student_count/faculty_count) ASC";
+        $db->query($query);
+        
+        // 4. Rank by Research Output (using the view)
+        $query = "INSERT INTO Ranking (UniversityID, RankingType, Year, Rank, Value)
+                  SELECT u.UniversityID, 'RESEARCH_OUTPUT', $year, 
+                         @rank := @rank + 1 AS Rank, 
+                         IFNULL(r.PublishedResearchCount, 0) AS Value
+                  FROM University u
+                  LEFT JOIN vw_university_published_research_2025_inclusive r ON u.UniversityID = r.UniversityID,
+                  (SELECT @rank := 0) rnk
+                  ORDER BY Value DESC";
+        $db->query($query);
+        
+        // 5. Rank by Graduation Rate (using the view)
+        $query = "INSERT INTO Ranking (UniversityID, RankingType, Year, Rank, Value)
+                  SELECT u.UniversityID, 'GRADUATION_RATE', $year, 
+                         @rank := @rank + 1 AS Rank, 
+                         CASE 
+                            WHEN g.AdmittedStudentCount2025 = 0 THEN 0
+                            ELSE (g.GraduatedStudentCount2025 * 100.0) / g.AdmittedStudentCount2025
+                         END AS Value
+                  FROM University u
+                  LEFT JOIN vw_university_graduation_stats_simple_2025 g ON u.UniversityID = g.UniversityID,
+                  (SELECT @rank := 0) rnk
+                  ORDER BY Value DESC";
         $db->query($query);
         
         $_SESSION['message'] = "Rankings generated successfully for year $year!";
         header("Location: ranking_manage-admin.php");
         exit();
     }
-    
-    if (isset($_POST['update_metrics'])) {
-        $universityID = $_POST['university_id'];
-        $year = $_POST['year'];
-        $researchOutput = $_POST['research_output'];
-        $internationalStudents = $_POST['international_students'];
-        $graduationRate = $_POST['graduation_rate'];
-        
-        // Update or insert research output ranking
-        $query = "INSERT INTO Ranking (UniversityID, RankingType, Year, Value)
-                  VALUES (?, 'RESEARCH_OUTPUT', ?, ?)
-                  ON DUPLICATE KEY UPDATE Value = ?";
-        $stmt = $db->prepare($query);
-        $stmt->bind_param("iidd", $universityID, $year, $researchOutput, $researchOutput);
-        $stmt->execute();
-        
-        // Update or insert international students ranking
-        $query = "INSERT INTO Ranking (UniversityID, RankingType, Year, Value)
-                  VALUES (?, 'INTERNATIONAL_STUDENTS', ?, ?)
-                  ON DUPLICATE KEY UPDATE Value = ?";
-        $stmt = $db->prepare($query);
-        $stmt->bind_param("iidd", $universityID, $year, $internationalStudents, $internationalStudents);
-        $stmt->execute();
-        
-        // Update or insert graduation rate ranking
-        $query = "INSERT INTO Ranking (UniversityID, RankingType, Year, Value)
-                  VALUES (?, 'GRADUATION_RATE', ?, ?)
-                  ON DUPLICATE KEY UPDATE Value = ?";
-        $stmt = $db->prepare($query);
-        $stmt->bind_param("iidd", $universityID, $year, $graduationRate, $graduationRate);
-        $stmt->execute();
-        
-        // Regenerate rankings for these metrics
-        regenerateRankings($db, $year, ['RESEARCH_OUTPUT', 'INTERNATIONAL_STUDENTS', 'GRADUATION_RATE']);
-        
-        $_SESSION['message'] = "Metrics updated successfully!";
-        header("Location: ranking_manage-admin.php");
-        exit();
-    }
 }
+
 
 function regenerateRankings($db, $year, $types) {
     foreach ($types as $type) {
@@ -220,11 +207,6 @@ $currentYear = date('Y');
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="international-tab" data-bs-toggle="tab" data-bs-target="#international" type="button" role="tab">
-                By International Students
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
             <button class="nav-link" id="graduation-tab" data-bs-toggle="tab" data-bs-target="#graduation" type="button" role="tab">
                 By Graduation Rate
             </button>
@@ -238,7 +220,6 @@ $currentYear = date('Y');
             'FACULTY_COUNT' => 'faculty',
             'STUDENT_FACULTY_RATIO' => 'ratio',
             'RESEARCH_OUTPUT' => 'research',
-            'INTERNATIONAL_STUDENTS' => 'international',
             'GRADUATION_RATE' => 'graduation'
         ];
         
@@ -250,11 +231,6 @@ $currentYear = date('Y');
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
                         <?= ucfirst(str_replace('_', ' ', $type)) ?> Rankings
-                        <?php if (in_array($type, ['RESEARCH_OUTPUT', 'INTERNATIONAL_STUDENTS', 'GRADUATION_RATE'])): ?>
-                        <button class="btn btn-sm btn-light float-end" data-bs-toggle="modal" data-bs-target="#updateMetricsModal">
-                            <i class="fas fa-edit me-1"></i> Update Metrics
-                        </button>
-                        <?php endif; ?>
                     </h5>
                 </div>
                 <div class="card-body">
@@ -336,60 +312,6 @@ $currentYear = date('Y');
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" name="generate_rankings" class="btn btn-primary">Generate</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Update Metrics Modal -->
-<div class="modal fade" id="updateMetricsModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Update University Metrics</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">University</label>
-                        <select class="form-select" name="university_id" required>
-                            <option value="">Select University</option>
-                            <?php foreach ($universities as $uni): ?>
-                                <option value="<?= $uni['UniversityID'] ?>">
-                                    <?= htmlspecialchars($uni['Name']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Year</label>
-                        <select class="form-select" name="year" required>
-                            <?php foreach ($years as $y): ?>
-                                <option value="<?= $y['Year'] ?>" <?= $y['Year'] == $currentYear ? 'selected' : '' ?>>
-                                    <?= $y['Year'] ?>
-                                </option>
-                            <?php endforeach; ?>
-                            <option value="<?= $currentYear ?>"><?= $currentYear ?> (New)</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Research Output</label>
-                        <input type="number" class="form-control" name="research_output" min="0">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">International Students Count</label>
-                        <input type="number" class="form-control" name="international_students" min="0">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Graduation Rate (%)</label>
-                        <input type="number" step="0.1" class="form-control" name="graduation_rate" min="0" max="100">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" name="update_metrics" class="btn btn-primary">Update</button>
                 </div>
             </form>
         </div>
