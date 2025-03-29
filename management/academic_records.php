@@ -226,12 +226,13 @@ while ($row = $result->fetch_assoc()) {
                                         <th>Status</th>
                                         <th>Attendance</th>
                                         <th>Graduation</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php if (empty($academicRecords)): ?>
                                         <tr>
-                                            <td colspan="6" class="text-center">
+                                            <td colspan="7" class="text-center">
                                                 No academic records found
                                                 <?php if (!empty($searchStudentID)): ?>
                                                     for Student ID <?= htmlspecialchars($searchStudentID) ?>
@@ -251,6 +252,16 @@ while ($row = $result->fetch_assoc()) {
                                             </td>
                                             <td><?= $record['Attendance'] ? $record['Attendance'].'%' : 'N/A' ?></td>
                                             <td><?= $record['GraduationDate'] ?: 'N/A' ?></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary edit-academic-btn" 
+                                                        data-id="<?= $record['StudentID'] ?>"
+                                                        data-cgpa="<?= $record['CGPA'] ?>"
+                                                        data-status="<?= $record['EnrollmentStatus'] ?>"
+                                                        data-attendance="<?= $record['Attendance'] ?>"
+                                                        data-graduation="<?= $record['GraduationDate'] ?>">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </button>
+                                            </td>
                                         </tr>
                                         <?php endforeach; ?>
                                     <?php endif; ?>
@@ -263,32 +274,76 @@ while ($row = $result->fetch_assoc()) {
         </div>
     </div>
 
+    <!-- Edit Academic Record Modal -->
+    <div class="modal fade" id="editAcademicModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-edit me-2"></i>Edit Academic Record</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editAcademicForm" method="POST">
+                    <div class="modal-body">
+                        <input type="hidden" name="student_id" id="modal_student_id">
+                        <div class="mb-3">
+                            <label for="modal_cgpa" class="form-label">CGPA (0.00-4.00)*</label>
+                            <input type="number" step="0.01" min="0" max="4" class="form-control" id="modal_cgpa" name="cgpa" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modal_enrollment_status" class="form-label">Enrollment Status *</label>
+                            <select class="form-select" id="modal_enrollment_status" name="enrollment_status" required>
+                                <option value="Enrolled">Enrolled</option>
+                                <option value="Unenrolled">Unenrolled</option>
+                                <option value="Graduated">Graduated</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modal_attendance" class="form-label">Attendance (%)*</label>
+                            <input type="number" step="0.01" min="0" max="100" class="form-control" id="modal_attendance" name="attendance" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="modal_graduation_date" class="form-label">Graduation Date*</label>
+                            <input type="date" class="form-control" id="modal_graduation_date" name="graduation_date" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="update_academic" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
     <script>
         $(document).ready(function() {
             // Auto-fill form when clicking on a record
-            $('tbody tr').click(function() {
-                const cells = $(this).find('td');
-                if (cells.length === 6) {
-                    $('#student_id').val(cells.eq(0).text());
-                    
-                    const cgpa = cells.eq(2).text();
-                    $('#cgpa').val(cgpa === 'N/A' ? '' : cgpa);
-                    
-                    $('#enrollment_status').val(cells.eq(3).find('span').text().trim());
-                    
-                    const attendance = cells.eq(4).text();
-                    $('#attendance').val(attendance === 'N/A' ? '' : attendance.replace('%', ''));
-                    
-                    const gradDate = cells.eq(5).text();
-                    $('#graduation_date').val(gradDate === 'N/A' ? '' : gradDate);
-                    
-                    // Scroll to form
-                    $('html, body').animate({
-                        scrollTop: $('#academicForm').offset().top - 20
-                    }, 500);
+            $('tbody tr').click(function(e) {
+                // Don't trigger if clicking on the edit button
+                if (!$(e.target).closest('.edit-academic-btn').length) {
+                    const cells = $(this).find('td');
+                    if (cells.length === 7) {
+                        $('#student_id').val(cells.eq(0).text());
+                        
+                        const cgpa = cells.eq(2).text();
+                        $('#cgpa').val(cgpa === 'N/A' ? '' : cgpa);
+                        
+                        $('#enrollment_status').val(cells.eq(3).find('span').text().trim());
+                        
+                        const attendance = cells.eq(4).text();
+                        $('#attendance').val(attendance === 'N/A' ? '' : attendance.replace('%', ''));
+                        
+                        const gradDate = cells.eq(5).text();
+                        $('#graduation_date').val(gradDate === 'N/A' ? '' : gradDate);
+                        
+                        // Scroll to form
+                        $('html, body').animate({
+                            scrollTop: $('#academicForm').offset().top - 20
+                        }, 500);
+                    }
                 }
             });
             
@@ -297,6 +352,30 @@ while ($row = $result->fetch_assoc()) {
                 function() { $(this).addClass('highlight'); },
                 function() { $(this).removeClass('highlight'); }
             );
+            
+            // Edit button click handler
+            $('.edit-academic-btn').click(function() {
+                const studentID = $(this).data('id');
+                const cgpa = $(this).data('cgpa');
+                const status = $(this).data('status');
+                const attendance = $(this).data('attendance');
+                const graduation = $(this).data('graduation');
+                
+                $('#modal_student_id').val(studentID);
+                $('#modal_cgpa').val(cgpa);
+                $('#modal_enrollment_status').val(status);
+                $('#modal_attendance').val(attendance);
+                $('#modal_graduation_date').val(graduation);
+                
+                $('#editAcademicModal').modal('show');
+            });
+            
+            // Handle modal form submission
+            $('#editAcademicForm').submit(function(e) {
+                // The form will submit normally since it has the same fields as the main form
+                // and the same action (current page)
+                $('#editAcademicModal').modal('hide');
+            });
         });
     </script>
 </body>

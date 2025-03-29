@@ -14,10 +14,7 @@
                         <a class="nav-link active" href="../dashboard.php">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Reports</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Settings</a>
+                        <a class="nav-link" href="../reports.php">Reports</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">

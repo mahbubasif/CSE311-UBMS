@@ -25,72 +25,86 @@ while ($row = $deptResult->fetch_assoc()) {
 
 // Handle faculty insertion
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_faculty'])) {
-  $facultyID = $_POST['faculty_id']; // New field
-  $name = $_POST['name'];
-  $phone = $_POST['phone'];
-  $email = $_POST['email'];
-  $address = $_POST['address'] ?? null;
-  $departmentID = $_POST['department_id'];
-  
-  // Validate inputs
-  if (empty($facultyID) || empty($name) || empty($phone) || empty($email) || empty($departmentID)) {
-      $_SESSION['error'] = "Faculty ID, Name, Phone, Email, and Department are required!";
-      header("Location: faculty_manage.php");
-      exit();
-  }
-  
-  // Check if department belongs to this university
-  if (!array_key_exists($departmentID, $departments)) {
-      $_SESSION['error'] = "Invalid department selected!";
-      header("Location: faculty_manage.php");
-      exit();
-  }
-  
-  // Check if faculty ID already exists
-  $checkQuery = "SELECT FacultyID FROM Faculty WHERE FacultyID = ?";
-  $checkStmt = $db->prepare($checkQuery);
-  $checkStmt->bind_param("i", $facultyID);
-  $checkStmt->execute();
-  if ($checkStmt->get_result()->num_rows > 0) {
-      $_SESSION['error'] = "Faculty ID already exists!";
-      header("Location: faculty_manage.php");
-      exit();
-  }
-  
-  // Start transaction
-  $db->begin_transaction();
-  
-  try {
-      // Insert into Faculty table
-      $facultyQuery = "INSERT INTO Faculty (FacultyID, Name, Phone, Email, Address) VALUES (?, ?, ?, ?, ?)";
-      $facultyStmt = $db->prepare($facultyQuery);
-      $facultyStmt->bind_param("issss", $facultyID, $name, $phone, $email, $address);
-      $facultyStmt->execute();
-      
-      // Insert into uni_fac relationship table
-      $uniFacQuery = "INSERT INTO uni_fac (FacultyID, UniversityID, DepartmentID) VALUES (?, ?, ?)";
-      $uniFacStmt = $db->prepare($uniFacQuery);
-      $uniFacStmt->bind_param("iii", $facultyID, $universityID, $departmentID);
-      $uniFacStmt->execute();
-      
-      $db->commit();
-      $_SESSION['message'] = "Faculty added successfully!";
-  } catch (Exception $e) {
-      $db->rollback();
-      $_SESSION['error'] = "Error adding faculty: " . $e->getMessage();
-  }
-  
-  header("Location: faculty_manage.php");
-  exit();
+    $facultyID = $_POST['faculty_id'];
+    $name = $_POST['name'];
+    $phone = $_POST['phone'];
+    $email = $_POST['email'];
+    $address = $_POST['address'] ?? null;
+    $departmentID = $_POST['department_id'];
+    $qualification = $_POST['qualification'] ?? null;
+    $training = $_POST['training'] ?? null;
+    
+    // Validate inputs
+    if (empty($facultyID) || empty($name) || empty($phone) || empty($email) || empty($departmentID)) {
+        $_SESSION['error'] = "Faculty ID, Name, Phone, Email, and Department are required!";
+        header("Location: faculty_manage.php");
+        exit();
+    }
+    
+    // Check if department belongs to this university
+    if (!array_key_exists($departmentID, $departments)) {
+        $_SESSION['error'] = "Invalid department selected!";
+        header("Location: faculty_manage.php");
+        exit();
+    }
+    
+    // Check if faculty ID already exists
+    $checkQuery = "SELECT FacultyID FROM Faculty WHERE FacultyID = ?";
+    $checkStmt = $db->prepare($checkQuery);
+    $checkStmt->bind_param("i", $facultyID);
+    $checkStmt->execute();
+    if ($checkStmt->get_result()->num_rows > 0) {
+        $_SESSION['error'] = "Faculty ID already exists!";
+        header("Location: faculty_manage.php");
+        exit();
+    }
+    
+    // Start transaction
+    $db->begin_transaction();
+    
+    try {
+        // Insert into Faculty table
+        $facultyQuery = "INSERT INTO Faculty (FacultyID, Name, Phone, Email, Address) VALUES (?, ?, ?, ?, ?)";
+        $facultyStmt = $db->prepare($facultyQuery);
+        $facultyStmt->bind_param("issss", $facultyID, $name, $phone, $email, $address);
+        $facultyStmt->execute();
+        
+        // Insert into uni_fac relationship table
+        $uniFacQuery = "INSERT INTO uni_fac (FacultyID, UniversityID, DepartmentID) VALUES (?, ?, ?)";
+        $uniFacStmt = $db->prepare($uniFacQuery);
+        $uniFacStmt->bind_param("iii", $facultyID, $universityID, $departmentID);
+        $uniFacStmt->execute();
+        
+        // Insert qualification if provided
+        if (!empty($qualification)) {
+            $qualQuery = "INSERT INTO FacultyQualification (QualificationName, Training, FacultyID) VALUES (?, ?, ?)";
+            $qualStmt = $db->prepare($qualQuery);
+            $qualStmt->bind_param("ssi", $qualification, $training, $facultyID);
+            $qualStmt->execute();
+        }
+        
+        $db->commit();
+        $_SESSION['message'] = "Faculty added successfully!";
+    } catch (Exception $e) {
+        $db->rollback();
+        $_SESSION['error'] = "Error adding faculty: " . $e->getMessage();
+    }
+    
+    header("Location: faculty_manage.php");
+    exit();
 }
 
-// Fetch existing faculty for this university
+// Fetch existing faculty for this university with their qualifications
 $facultyList = [];
-$facultyQuery = "SELECT f.FacultyID, f.Name, f.Phone, f.Email, d.Name AS DepartmentName 
-                 FROM Faculty f
-                 JOIN uni_fac uf ON f.FacultyID = uf.FacultyID
-                 JOIN Department d ON uf.DepartmentID = d.DepartmentID
-                 WHERE uf.UniversityID = ?";
+$facultyQuery = "SELECT f.FacultyID, f.Name, f.Phone, f.Email, d.Name AS DepartmentName,
+                GROUP_CONCAT(fq.QualificationName SEPARATOR ', ') AS Qualifications,
+                GROUP_CONCAT(fq.Training SEPARATOR ', ') AS Trainings
+                FROM Faculty f
+                JOIN uni_fac uf ON f.FacultyID = uf.FacultyID
+                JOIN Department d ON uf.DepartmentID = d.DepartmentID
+                LEFT JOIN FacultyQualification fq ON f.FacultyID = fq.FacultyID
+                WHERE uf.UniversityID = ?
+                GROUP BY f.FacultyID";
 $facultyStmt = $db->prepare($facultyQuery);
 $facultyStmt->bind_param("i", $universityID);
 $facultyStmt->execute();
@@ -117,6 +131,26 @@ while ($row = $facultyResult->fetch_assoc()) {
         }
         .highlight {
             background-color: #fffde7;
+        }
+        .qualification-badge {
+            background-color: #e3f2fd;
+            color: #0d6efd;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 0.85em;
+            margin-right: 5px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        .training-badge {
+            background-color: #e8f5e9;
+            color: #198754;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 0.85em;
+            margin-right: 5px;
+            display: inline-block;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -183,6 +217,14 @@ while ($row = $facultyResult->fetch_assoc()) {
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label for="qualification" class="form-label">Qualification</label>
+                            <input type="text" class="form-control" id="qualification" name="qualification" placeholder="e.g., PhD in Computer Science">
+                        </div>
+                        <div class="mb-3">
+                            <label for="training" class="form-label">Training</label>
+                            <input type="text" class="form-control" id="training" name="training" placeholder="e.g., Advanced Teaching Methods">
+                        </div>
                         <button type="submit" name="add_faculty" class="btn btn-primary w-100">
                             <i class="fas fa-save me-2"></i>Save Faculty
                         </button>
@@ -214,6 +256,8 @@ while ($row = $facultyResult->fetch_assoc()) {
                                         <th>Phone</th>
                                         <th>Email</th>
                                         <th>Department</th>
+                                        <th>Qualifications & Training</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="facultyTableBody">
@@ -224,6 +268,38 @@ while ($row = $facultyResult->fetch_assoc()) {
                                         <td><?php echo htmlspecialchars($faculty['Phone']); ?></td>
                                         <td><?php echo htmlspecialchars($faculty['Email']); ?></td>
                                         <td><?php echo htmlspecialchars($faculty['DepartmentName']); ?></td>
+                                        <td>
+                                            <?php if (!empty($faculty['Qualifications'])): ?>
+                                                <div>
+                                                    <strong>Qualifications:</strong><br>
+                                                    <?php 
+                                                    $quals = explode(', ', $faculty['Qualifications']);
+                                                    foreach ($quals as $qual): 
+                                                        if (!empty(trim($qual))): ?>
+                                                            <span class="qualification-badge"><?php echo htmlspecialchars($qual); ?></span>
+                                                        <?php endif; ?>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            
+                                            <?php if (!empty($faculty['Trainings'])): ?>
+                                                <div class="mt-2">
+                                                    <strong>Training:</strong><br>
+                                                    <?php 
+                                                    $trainings = explode(', ', $faculty['Trainings']);
+                                                    foreach ($trainings as $training): 
+                                                        if (!empty(trim($training))): ?>
+                                                            <span class="training-badge"><?php echo htmlspecialchars($training); ?></span>
+                                                        <?php endif; ?>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger delete-faculty" data-id="<?php echo $faculty['FacultyID']; ?>">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -253,20 +329,23 @@ while ($row = $facultyResult->fetch_assoc()) {
                     $('#searchButton').click();
                 }
             });
-            
-            // Delete faculty
-            $('.delete-faculty').click(function() {
-                if (confirm('Are you sure you want to delete this faculty member?')) {
+    
+            // Delete faculty with confirmation
+            $(document).on('click', '.delete-faculty', function() {
+                if (confirm('Are you sure you want to delete this faculty member? This action cannot be undone.')) {
                     const facultyID = $(this).data('id');
-                    window.location.href = 'delete_faculty.php?id=' + facultyID;
+                    $.ajax({
+                        url: 'delete_faculty.php',
+                        type: 'POST',
+                        data: { faculty_id: facultyID },
+                        success: function(response) {
+                            location.reload(); // Refresh the page after deletion
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error deleting faculty: ' + error);
+                        }
+                    });
                 }
-            });
-            
-            // Edit faculty (you'll need to implement this functionality)
-            $('.edit-faculty').click(function() {
-                const facultyID = $(this).data('id');
-                alert('Edit functionality for faculty ID ' + facultyID + ' would go here');
-                // window.location.href = 'edit_faculty.php?id=' + facultyID;
             });
         });
     </script>
