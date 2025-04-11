@@ -5,7 +5,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <!DOCTYPE html>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="/ubms/index.php">
+        <a class="navbar-brand" href="index.php">
             <i class="fas fa-university me-2"></i>UBMS
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

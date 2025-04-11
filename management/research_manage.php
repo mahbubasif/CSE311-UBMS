@@ -1,4 +1,7 @@
   <?php
+  /*
+  echo "This is reserach management page, 
+  Not working right now, will check later */
   session_start();
   require_once __DIR__ . '/../db_connection.php';
 

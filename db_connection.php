@@ -1,9 +1,9 @@
 <?php
 class DBConnection {
-    private $host = 'localhost';
-    private $db_name = 'ubms2';
-    private $username = 'root';
-    private $password = '';
+    private $host = 'testcc.me';
+    private $db_name = 'tetcc_ubms';
+    private $username = 'tetcc_asif';
+    private $password = "54sA[pI%x=~^";
     private $conn;
 
     public function __construct() {
