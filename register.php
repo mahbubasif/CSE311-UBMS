@@ -24,9 +24,22 @@ class UniversityRegistration {
         return "uni_" . $newNumber;
     }
 
-    public function registerUniversity($name, $contactDetails, $location, $password) {
-        $accreditationStatus = 'Pending';
+    public function isUniversityExists($name) {
+        $query = "SELECT Name FROM University WHERE Name = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->bind_param("s", $name);
+        $stmt->execute();
+        $stmt->store_result();
         
+        return $stmt->num_rows > 0;
+    }
+
+    public function registerUniversity($name, $contactDetails, $location, $password) {
+        if ($this->isUniversityExists($name)) {
+            return "exists";
+        }
+        
+        $accreditationStatus = 'Pending';
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         $query = "INSERT INTO University (Name, ContactDetails, Location, AccreditationStatus, Password) 
@@ -55,7 +68,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = "Passwords do not match!";
     } else {
         $registration = new UniversityRegistration();
-        if ($registration->registerUniversity($name, $contactDetails, $location, $password)) {
+        $result = $registration->registerUniversity($name, $contactDetails, $location, $password);
+        
+        if ($result === "exists") {
+            $error = "A university with this name is already registered!";
+        } elseif ($result === true) {
             $success = "University registered successfully!";
         } else {
             $error = "Failed to register university. Please try again.";
