@@ -45,7 +45,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-primary <?php echo ($current_page == 'register.php') ? 'active' : ''; ?>" href="/register.php">
+                        <a class="btn btn-primary me-2 <?php echo ($current_page == 'register.php') ? 'active' : ''; ?>" href="/register.php">
                             <i class="fas fa-user-plus me-1"></i> Register
                         </a>
                     </li>
