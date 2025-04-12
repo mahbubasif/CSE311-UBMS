@@ -58,7 +58,7 @@
                 </ul>
                 <ul class="navbar-nav">
                 <li class="nav-item me-2">
-                    <a class="btn btn-warning <?php $current_page; echo ($current_page == 'admin.php') ? 'active' : ''; ?>" href="admin.php">
+                    <a class="btn btn-warning" href="admin.php">
                         <i class="fas fa-user-shield me-1"></i> Admin Login
                     </a>
                 </li>
