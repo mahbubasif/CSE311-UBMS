@@ -22,6 +22,10 @@ function insertStudentData($studentData) {
         $undergradQuery = "INSERT INTO UndergradStudent (StudentID, UniversityID) VALUES (?, ?)";
         $undergradStmt = $db->prepare($undergradQuery);
 
+        // Prepare the insert statement for AcademicRecord table
+        $academicQuery = "INSERT INTO AcademicRecord (StudentID, CGPA, EnrollmentStatus) VALUES (?, 0.0, 'Enrolled')";
+        $academicStmt = $db->prepare($academicQuery);
+
         foreach ($studentData as $student) {
             // Insert into Student table
             $studentStmt->bind_param(
@@ -44,11 +48,15 @@ function insertStudentData($studentData) {
                 $undergradStmt->bind_param("si", $student['StudentID'], $student['UniversityID']);
                 $undergradStmt->execute();
             }
+
+            // Insert into AcademicRecord table with default values
+            $academicStmt->bind_param("s", $student['StudentID']);
+            $academicStmt->execute();
         }
 
         // Commit transaction
         $db->commit();
-        echo "Student data inserted successfully!";
+        echo "Student data and academic records inserted successfully!";
 
     } catch (Exception $e) {
         // Rollback transaction on error
@@ -56,9 +64,10 @@ function insertStudentData($studentData) {
         echo "Error inserting student data: " . $e->getMessage();
     } finally {
         // Close statements and connection
-        $studentStmt->close();
-        $gradStmt->close();
-        $undergradStmt->close();
+        if (isset($studentStmt)) $studentStmt->close();
+        if (isset($gradStmt)) $gradStmt->close();
+        if (isset($undergradStmt)) $undergradStmt->close();
+        if (isset($academicStmt)) $academicStmt->close();
         $dbConnection->closeConnection();
     }
 }
