@@ -122,11 +122,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_student'])) {
         $typeStmt->bind_param("si", $studentID, $universityID);
         $typeStmt->execute();
         
+        // Insert into AcademicRecord table with default values
+        $academicQuery = "INSERT INTO AcademicRecord (StudentID, CGPA, EnrollmentStatus) 
+                          VALUES (?, 0.0, 'Enrolled')";
+        $academicStmt = $db->prepare($academicQuery);
+        $academicStmt->bind_param("s", $studentID);
+        $academicStmt->execute();
+        
         $db->commit();
         $_SESSION['message'] = "Student added successfully!";
     } catch (Exception $e) {
         $db->rollback();
         $_SESSION['error'] = "Error adding student: " . $e->getMessage();
+    } finally {
+        // Close any open statements if they exist
+        if (isset($academicStmt)) {
+            $academicStmt->close();
+        }
+        if (isset($typeStmt)) {
+            $typeStmt->close();
+        }
+        if (isset($stmt)) {
+            $stmt->close();
+        }
     }
     
     header("Location: student_manage.php");

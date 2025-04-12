@@ -1,212 +1,332 @@
 [
-  {
-      "StudentID": 1001,
+    {
+        "StudentID": 10001,
+        "Name": "Asif Rahman",
+        "DOB": "2000-12-02",
+        "AdmissionDate": "2025-04-12",
+        "UniversityID": 1,
+        "DepartmentID": 1,
+        "StudentType": "undergraduate",
+        "AccreditationID": 2,
+        "ProgramName": "BS in CSE"
+      },
+      {
+        "StudentID": 10002,
+        "Name": "Sadman Sakib",
+        "DOB": "2001-05-08",
+        "AdmissionDate": "2025-04-12",
+        "UniversityID": 1,
+        "DepartmentID": 1,
+        "StudentType": "undergraduate",
+        "AccreditationID": 4,
+        "ProgramName": "BS in EEE"
+      },
+      {
+        "StudentID": 10003,
+        "Name": "Fatima Ahmed",
+        "DOB": "2000-07-15",
+        "AdmissionDate": "2025-04-11",
+        "UniversityID": 1,
+        "DepartmentID": 2,
+        "StudentType": "graduate",
+        "AccreditationID": 8,
+        "ProgramName": "MSc in AMCS"
+      },
+      {
+        "StudentID": 10004,
+        "Name": "Rahim Khan",
+        "DOB": "1999-11-22",
+        "AdmissionDate": "2025-04-10",
+        "UniversityID": 1,
+        "DepartmentID": 3,
+        "StudentType": "undergraduate",
+        "AccreditationID": 5,
+        "ProgramName": "BS in Microbiology"
+      },
+      {
+        "StudentID": 10005,
+        "Name": "Ayesha Begum",
+        "DOB": "2001-03-30",
+        "AdmissionDate": "2025-04-09",
+        "UniversityID": 1,
+        "DepartmentID": 4,
+        "StudentType": "undergraduate",
+        "AccreditationID": 9,
+        "ProgramName": "BS in Economics"
+      },
+      {
+        "StudentID": 10006,
+        "Name": "Imran Hossain",
+        "DOB": "2000-09-18",
+        "AdmissionDate": "2025-04-08",
+        "UniversityID": 1,
+        "DepartmentID": 5,
+        "StudentType": "undergraduate",
+        "AccreditationID": 6,
+        "ProgramName": "BS in CEE"
+      },
+      {
+        "StudentID": 10007,
+        "Name": "Tasnim Akter",
+        "DOB": "2001-01-25",
+        "AdmissionDate": "2025-04-07",
+        "UniversityID": 1,
+        "DepartmentID": 10,
+        "StudentType": "graduate",
+        "AccreditationID": 7,
+        "ProgramName": "MA in History"
+      },
+      {
+        "StudentID": 10008,
+        "Name": "Kamal Uddin",
+        "DOB": "2000-06-14",
+        "AdmissionDate": "2025-04-06",
+        "UniversityID": 1,
+        "DepartmentID": 1,
+        "StudentType": "undergraduate",
+        "AccreditationID": 2,
+        "ProgramName": "BS in CSE"
+      },
+      {
+        "StudentID": 10009,
+        "Name": "Nusrat Jahan",
+        "DOB": "2001-08-05",
+        "AdmissionDate": "2025-04-05",
+        "UniversityID": 1,
+        "DepartmentID": 2,
+        "StudentType": "graduate",
+        "AccreditationID": 8,
+        "ProgramName": "MSc in AMCS"
+      },
+      {
+        "StudentID": 10010,
+        "Name": "Arif Chowdhury",
+        "DOB": "2000-04-12",
+        "AdmissionDate": "2025-04-04",
+        "UniversityID": 1,
+        "DepartmentID": 3,
+        "StudentType": "undergraduate",
+        "AccreditationID": 5,
+        "ProgramName": "BS in Microbiology"
+      },
+      {
+        "StudentID": 10011,
+        "Name": "Sharmin Akter",
+        "DOB": "2001-02-28",
+        "AdmissionDate": "2025-04-03",
+        "UniversityID": 1,
+        "DepartmentID": 4,
+        "StudentType": "graduate",
+        "AccreditationID": 10,
+        "ProgramName": "MSc in Economics"
+      },
+      {
+        "StudentID": 10012,
+        "Name": "Faisal Mahmud",
+        "DOB": "2000-10-17",
+        "AdmissionDate": "2025-04-02",
+        "UniversityID": 1,
+        "DepartmentID": 5,
+        "StudentType": "undergraduate",
+        "AccreditationID": 6,
+        "ProgramName": "BS in CEE"
+      },
+      {
+        "StudentID": 10013,
+        "Name": "Jannatul Ferdous",
+        "DOB": "2001-07-08",
+        "AdmissionDate": "2025-04-01",
+        "UniversityID": 1,
+        "DepartmentID": 10,
+        "StudentType": "graduate",
+        "AccreditationID": 7,
+        "ProgramName": "MA in History"
+      },
+      {
+        "StudentID": 10014,
+        "Name": "Rafiq Islam",
+        "DOB": "2000-03-19",
+        "AdmissionDate": "2025-03-31",
+        "UniversityID": 1,
+        "DepartmentID": 1,
+        "StudentType": "undergraduate",
+        "AccreditationID": 2,
+        "ProgramName": "BS in CSE"
+      },
+      {
+        "StudentID": 10015,
+        "Name": "Tania Ahmed",
+        "DOB": "2001-09-22",
+        "AdmissionDate": "2025-03-30",
+        "UniversityID": 1,
+        "DepartmentID": 2,
+        "StudentType": "graduate",
+        "AccreditationID": 8,
+        "ProgramName": "MSc in AMCS"
+      },
+      {
+        "StudentID": 10016,
+        "Name": "Sajid Rahman",
+        "DOB": "2000-12-11",
+        "AdmissionDate": "2025-03-29",
+        "UniversityID": 1,
+        "DepartmentID": 3,
+        "StudentType": "undergraduate",
+        "AccreditationID": 5,
+        "ProgramName": "BS in Microbiology"
+      },
+      {
+        "StudentID": 10017,
+        "Name": "Nazia Sultana",
+        "DOB": "2001-04-05",
+        "AdmissionDate": "2025-03-28",
+        "UniversityID": 1,
+        "DepartmentID": 4,
+        "StudentType": "undergraduate",
+        "AccreditationID": 9,
+        "ProgramName": "BS in Economics"
+      },
+      {
+        "StudentID": 10018,
+        "Name": "Bappy Das",
+        "DOB": "2000-08-16",
+        "AdmissionDate": "2025-03-27",
+        "UniversityID": 1,
+        "DepartmentID": 5,
+        "StudentType": "undergraduate",
+        "AccreditationID": 6,
+        "ProgramName": "BS in CEE"
+      },
+      {
+        "StudentID": 10019,
+        "Name": "Farhana Yesmin",
+        "DOB": "2001-11-09",
+        "AdmissionDate": "2025-03-26",
+        "UniversityID": 1,
+        "DepartmentID": 10,
+        "StudentType": "graduate",
+        "AccreditationID": 7,
+        "ProgramName": "MA in History"
+      },
+      {
+        "StudentID": 10020,
+        "Name": "Shahriar Kabir",
+        "DOB": "2000-05-24",
+        "AdmissionDate": "2025-03-25",
+        "UniversityID": 1,
+        "DepartmentID": 1,
+        "StudentType": "undergraduate",
+        "AccreditationID": 4,
+        "ProgramName": "BS in EEE"
+      },
+    {
+      "StudentID": 10021,
+      "Name": "Tanvir Hasan",
+      "DOB": "2000-02-14",
+      "AdmissionDate": "2025-03-24",
       "UniversityID": 1,
-      "Name": "Emily Rodriguez",
-      "DOB": "2002-03-15",
-      "AdmissionDate": "2020-09-01"
-  },
-  {
-      "StudentID": 1002,
+      "DepartmentID": 2,
+      "StudentType": "undergraduate",
+      "AccreditationID": 8,
+      "ProgramName": "BS in AMCS"
+    },
+    {
+      "StudentID": 10022,
+      "Name": "Sabrina Akhtar",
+      "DOB": "2001-10-03",
+      "AdmissionDate": "2025-03-23",
       "UniversityID": 1,
-      "Name": "Michael Chen",
-      "DOB": "2001-11-22",
-      "AdmissionDate": "2019-01-15"
-  },
-  {
-      "StudentID": 1003,
+      "DepartmentID": 3,
+      "StudentType": "undergraduate",
+      "AccreditationID": 5,
+      "ProgramName": "BS in Microbiology"
+    },
+    {
+      "StudentID": 10023,
+      "Name": "Mamun Rashid",
+      "DOB": "2000-07-29",
+      "AdmissionDate": "2025-03-22",
       "UniversityID": 1,
-      "Name": "Aisha Patel",
-      "DOB": "2002-07-04",
-      "AdmissionDate": "2020-02-10"
-  },
-  {
-      "StudentID": 1004,
+      "DepartmentID": 4,
+      "StudentType": "graduate",
+      "AccreditationID": 10,
+      "ProgramName": "MSc in Economics"
+    },
+    {
+      "StudentID": 10024,
+      "Name": "Nusaiba Islam",
+      "DOB": "2001-06-17",
+      "AdmissionDate": "2025-03-21",
       "UniversityID": 1,
-      "Name": "David Thompson",
-      "DOB": "2001-05-19",
-      "AdmissionDate": "2018-09-01"
-  },
-  {
-      "StudentID": 1005,
+      "DepartmentID": 5,
+      "StudentType": "undergraduate",
+      "AccreditationID": 6,
+      "ProgramName": "BS in CEE"
+    },
+    {
+      "StudentID": 10025,
+      "Name": "Rafsan Ali",
+      "DOB": "2000-11-08",
+      "AdmissionDate": "2025-03-20",
       "UniversityID": 1,
-      "Name": "Sarah Kim",
-      "DOB": "2002-01-27",
-      "AdmissionDate": "2021-03-15"
-  },
-  {
-      "StudentID": 1006,
+      "DepartmentID": 10,
+      "StudentType": "graduate",
+      "AccreditationID": 7,
+      "ProgramName": "MA in History"
+    },
+    {
+      "StudentID": 10026,
+      "Name": "Lamia Khatun",
+      "DOB": "2001-01-12",
+      "AdmissionDate": "2025-03-19",
       "UniversityID": 1,
-      "Name": "Carlos Mendoza",
-      "DOB": "2001-09-11",
-      "AdmissionDate": "2019-06-20"
-  },
-  {
-      "StudentID": 1007,
+      "DepartmentID": 1,
+      "StudentType": "undergraduate",
+      "AccreditationID": 2,
+      "ProgramName": "BS in CSE"
+    },
+    {
+      "StudentID": 10027,
+      "Name": "Farhan Uddin",
+      "DOB": "2000-04-23",
+      "AdmissionDate": "2025-03-18",
       "UniversityID": 1,
-      "Name": "Olivia Williams",
-      "DOB": "2002-06-03",
-      "AdmissionDate": "2020-11-01"
-  },
-  {
-      "StudentID": 1008,
+      "DepartmentID": 1,
+      "StudentType": "undergraduate",
+      "AccreditationID": 4,
+      "ProgramName": "BS in EEE"
+    },
+    {
+      "StudentID": 10028,
+      "Name": "Samira Binte Kamal",
+      "DOB": "2001-08-30",
+      "AdmissionDate": "2025-03-17",
       "UniversityID": 1,
-      "Name": "Ryan Nakamura",
-      "DOB": "2001-12-16",
-      "AdmissionDate": "2018-01-30"
-  },
-  {
-      "StudentID": 1009,
+      "DepartmentID": 2,
+      "StudentType": "graduate",
+      "AccreditationID": 8,
+      "ProgramName": "MSc in AMCS"
+    },
+    {
+      "StudentID": 10029,
+      "Name": "Zahid Hassan",
+      "DOB": "2000-09-05",
+      "AdmissionDate": "2025-03-16",
       "UniversityID": 1,
-      "Name": "Emma Fitzgerald",
-      "DOB": "2002-04-29",
-      "AdmissionDate": "2021-02-15"
-  },
-  {
-      "StudentID": 1010,
+      "DepartmentID": 3,
+      "StudentType": "undergraduate",
+      "AccreditationID": 5,
+      "ProgramName": "BS in Microbiology"
+    },
+    {
+      "StudentID": 10030,
+      "Name": "Roksana Parvin",
+      "DOB": "2001-12-20",
+      "AdmissionDate": "2025-03-15",
       "UniversityID": 1,
-      "Name": "Alexander Volkov",
-      "DOB": "2001-08-07",
-      "AdmissionDate": "2019-09-01"
-  },
-  {
-      "StudentID": 1011,
-      "UniversityID": 1,
-      "Name": "Isabella Santos",
-      "DOB": "2002-02-14",
-      "AdmissionDate": "2020-05-10"
-  },
-  {
-      "StudentID": 1012,
-      "UniversityID": 1,
-      "Name": "Lucas Okonkwo",
-      "DOB": "2001-10-25",
-      "AdmissionDate": "2018-11-15"
-  },
-  {
-      "StudentID": 1013,
-      "UniversityID": 1,
-      "Name": "Sophia Martinez",
-      "DOB": "2002-05-30",
-      "AdmissionDate": "2021-01-20"
-  },
-  {
-      "StudentID": 1014,
-      "UniversityID": 1,
-      "Name": "Benjamin Lee",
-      "DOB": "2001-07-12",
-      "AdmissionDate": "2019-03-05"
-  },
-  {
-      "StudentID": 1015,
-      "UniversityID": 1,
-      "Name": "Zara Ahmed",
-      "DOB": "2002-01-09",
-      "AdmissionDate": "2020-07-15"
-  },
-  {
-      "StudentID": 1016,
-      "UniversityID": 1,
-      "Name": "Victor Petrova",
-      "DOB": "2001-11-03",
-      "AdmissionDate": "2018-06-25"
-  },
-  {
-      "StudentID": 1017,
-      "UniversityID": 1,
-      "Name": "Elena Rodriguez",
-      "DOB": "2002-06-21",
-      "AdmissionDate": "2021-04-01"
-  },
-  {
-      "StudentID": 1018,
-      "UniversityID": 1,
-      "Name": "Mohammed Ali",
-      "DOB": "2001-09-18",
-      "AdmissionDate": "2019-12-10"
-  },
-  {
-      "StudentID": 1019,
-      "UniversityID": 1,
-      "Name": "Nina Kawasaki",
-      "DOB": "2002-03-07",
-      "AdmissionDate": "2020-08-20"
-  },
-  {
-      "StudentID": 1020,
-      "UniversityID": 1,
-      "Name": "Jacob Cohen",
-      "DOB": "2001-12-05",
-      "AdmissionDate": "2018-02-15"
-  },
-  {
-      "StudentID": 1021,
-      "UniversityID": 1,
-      "Name": "Rachel Green",
-      "DOB": "2002-04-12",
-      "AdmissionDate": "2021-05-30"
-  },
-  {
-      "StudentID": 1022,
-      "UniversityID": 1,
-      "Name": "Diego Ramirez",
-      "DOB": "2001-08-16",
-      "AdmissionDate": "2019-10-05"
-  },
-  {
-      "StudentID": 1023,
-      "UniversityID": 1,
-      "Name": "Priya Sharma",
-      "DOB": "2002-02-28",
-      "AdmissionDate": "2020-12-01"
-  },
-  {
-      "StudentID": 1024,
-      "UniversityID": 1,
-      "Name": "Thomas Mueller",
-      "DOB": "2001-10-09",
-      "AdmissionDate": "2018-07-15"
-  },
-  {
-      "StudentID": 1025,
-      "UniversityID": 1,
-      "Name": "Anna Kowalski",
-      "DOB": "2002-05-17",
-      "AdmissionDate": "2021-03-10"
-  },
-  {
-      "StudentID": 1026,
-      "UniversityID": 1,
-      "Name": "Marcus Johnson",
-      "DOB": "2001-07-23",
-      "AdmissionDate": "2019-11-20"
-  },
-  {
-      "StudentID": 1027,
-      "UniversityID": 1,
-      "Name": "Sara Ali",
-      "DOB": "2002-01-05",
-      "AdmissionDate": "2020-04-15"
-  },
-  {
-      "StudentID": 1028,
-      "UniversityID": 1,
-      "Name": "Ivan Petrov",
-      "DOB": "2001-11-14",
-      "AdmissionDate": "2018-10-01"
-  },
-  {
-      "StudentID": 1029,
-      "UniversityID": 1,
-      "Name": "Maya Rodriguez",
-      "DOB": "2002-06-09",
-      "AdmissionDate": "2021-06-25"
-  },
-  {
-      "StudentID": 1030,
-      "UniversityID": 1,
-      "Name": "Kwame Osei",
-      "DOB": "2001-04-22",
-      "AdmissionDate": "2019-02-15"
-  }
-]
+      "DepartmentID": 4,
+      "StudentType": "undergraduate",
+      "AccreditationID": 9,
+      "ProgramName": "BS in Economics"
+    }
+  ]

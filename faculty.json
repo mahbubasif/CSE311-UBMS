@@ -1,0 +1,282 @@
+[
+    {
+      "FacultyID": 1001,
+      "Name": "Dr. Sarah Johnson",
+      "Phone": "5551234567",
+      "Email": "s.johnson@university.edu",
+      "Address": "123 Academic Lane, Campus Town",
+      "Department": "Electrical & Computer Engineering",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Computer Engineering",
+          "Training": "Advanced Circuit Design"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1002,
+      "Name": "Prof. Michael Chen",
+      "Phone": "5552345678",
+      "Email": "m.chen@university.edu",
+      "Address": "456 Scholar Avenue, Campus Town",
+      "Department": "Electrical & Computer Engineering",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Electrical Engineering",
+          "Training": "Embedded Systems"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1003,
+      "Name": "Dr. Emily Wilson",
+      "Phone": "5553456789",
+      "Email": "e.wilson@university.edu",
+      "Address": "789 Research Road, Campus Town",
+      "Department": "Biochemistry & Microbiology",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Microbiology",
+          "Training": "CRISPR Technology"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1004,
+      "Name": "Prof. David Kim",
+      "Phone": "5554567890",
+      "Email": "d.kim@university.edu",
+      "Address": "321 Innovation Drive, Campus Town",
+      "Department": "Economics",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Economics",
+          "Training": "Econometric Analysis"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1005,
+      "Name": "Dr. Lisa Rodriguez",
+      "Phone": "5555678901",
+      "Email": "l.rodriguez@university.edu",
+      "Address": "654 Education Blvd, Campus Town",
+      "Department": "History & Philosophy",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Philosophy",
+          "Training": "Ancient Greek Texts"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1006,
+      "Name": "Prof. James Wilson",
+      "Phone": "5556789012",
+      "Email": "j.wilson@university.edu",
+      "Address": "987 Faculty Street, Campus Town",
+      "Department": "Mathematics & Physics",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Theoretical Physics",
+          "Training": "Quantum Field Theory"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1007,
+      "Name": "Dr. Olivia Martinez",
+      "Phone": "5557890123",
+      "Email": "o.martinez@university.edu",
+      "Address": "147 Academic Circle, Campus Town",
+      "Department": "Biochemistry & Microbiology",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Biochemistry",
+          "Training": "Protein Crystallography"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1008,
+      "Name": "Prof. Robert Taylor",
+      "Phone": "5558901234",
+      "Email": "r.taylor@university.edu",
+      "Address": "258 Scholar Lane, Campus Town",
+      "Department": "Civil & Environmental Engineering",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Civil Engineering",
+          "Training": "Structural Analysis"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1009,
+      "Name": "Dr. Sophia Lee",
+      "Phone": "5559012345",
+      "Email": "s.lee@university.edu",
+      "Address": "369 Research Avenue, Campus Town",
+      "Department": "Electrical & Computer Engineering",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Computer Science",
+          "Training": "Machine Learning"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1010,
+      "Name": "Prof. Daniel Brown",
+      "Phone": "5550123456",
+      "Email": "d.brown@university.edu",
+      "Address": "481 Innovation Road, Campus Town",
+      "Department": "Mathematics & Physics",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Applied Mathematics",
+          "Training": "Numerical Analysis"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1011,
+      "Name": "Dr. Ava Garcia",
+      "Phone": "5551122334",
+      "Email": "a.garcia@university.edu",
+      "Address": "592 Science Park, Campus Town",
+      "Department": "Biochemistry & Microbiology",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Molecular Biology",
+          "Training": "DNA Sequencing"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1012,
+      "Name": "Prof. Ethan Martinez",
+      "Phone": "5552233445",
+      "Email": "e.martinez@university.edu",
+      "Address": "603 Engineering Hall, Campus Town",
+      "Department": "Civil & Environmental Engineering",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Environmental Engineering",
+          "Training": "Water Treatment Systems"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1013,
+      "Name": "Dr. Mia Johnson",
+      "Phone": "5553344556",
+      "Email": "m.johnson@university.edu",
+      "Address": "714 Humanities Building, Campus Town",
+      "Department": "History & Philosophy",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Medieval History",
+          "Training": "Paleography"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1014,
+      "Name": "Prof. Noah Smith",
+      "Phone": "5554455667",
+      "Email": "n.smith@university.edu",
+      "Address": "825 Economics Department, Campus Town",
+      "Department": "Economics",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Financial Economics",
+          "Training": "Behavioral Economics"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1015,
+      "Name": "Dr. Isabella Wilson",
+      "Phone": "5555566778",
+      "Email": "i.wilson@university.edu",
+      "Address": "936 Physics Lab, Campus Town",
+      "Department": "Mathematics & Physics",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Astrophysics",
+          "Training": "Telescope Operation"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1016,
+      "Name": "Prof. Lucas Anderson",
+      "Phone": "5556677889",
+      "Email": "l.anderson@university.edu",
+      "Address": "1047 Computer Center, Campus Town",
+      "Department": "Electrical & Computer Engineering",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Computer Architecture",
+          "Training": "FPGA Programming"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1017,
+      "Name": "Dr. Charlotte Thompson",
+      "Phone": "5557788990",
+      "Email": "c.thompson@university.edu",
+      "Address": "1158 Biology Lab, Campus Town",
+      "Department": "Biochemistry & Microbiology",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Immunology",
+          "Training": "Flow Cytometry"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1018,
+      "Name": "Prof. Benjamin Clark",
+      "Phone": "5558899001",
+      "Email": "b.clark@university.edu",
+      "Address": "1269 Civil Engineering, Campus Town",
+      "Department": "Civil & Environmental Engineering",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Structural Engineering",
+          "Training": "Earthquake Engineering"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1019,
+      "Name": "Dr. Amelia Lewis",
+      "Phone": "5559900112",
+      "Email": "a.lewis@university.edu",
+      "Address": "1380 Philosophy Department, Campus Town",
+      "Department": "History & Philosophy",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Ethics",
+          "Training": "Bioethics"
+        }
+      ]
+    },
+    {
+      "FacultyID": 1020,
+      "Name": "Prof. Henry Walker",
+      "Phone": "5550011223",
+      "Email": "h.walker@university.edu",
+      "Address": "1491 Economics Research Center, Campus Town",
+      "Department": "Economics",
+      "Qualifications": [
+        {
+          "QualificationName": "PhD in Development Economics",
+          "Training": "Poverty Alleviation Strategies"
+        }
+      ]
+    }
+  ]
