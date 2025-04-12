@@ -1,0 +1,4 @@
+[11-Apr-2025 23:11:59 UTC] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in /home/tetcc/ubms.asifm.cloud/management/research_manage.php on line 10
+[11-Apr-2025 23:11:59 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home/tetcc/ubms.asifm.cloud/management/research_manage.php:1) in /home/tetcc/ubms.asifm.cloud/management/research_manage.php on line 15
+[11-Apr-2025 23:13:09 UTC] PHP Warning:  Undefined variable $universityName in /home/tetcc/ubms.asifm.cloud/management/navbar-management.php on line 6
+[11-Apr-2025 23:13:09 UTC] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in /home/tetcc/ubms.asifm.cloud/management/navbar-management.php on line 6

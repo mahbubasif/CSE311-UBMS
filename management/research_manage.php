@@ -1,9 +1,6 @@
-  <?php
-  /*
-  echo "This is reserach management page, 
-  Not working right now, will check later */
-  session_start();
-  require_once __DIR__ . '/../db_connection.php';
+<?php
+session_start();
+require_once __DIR__ . '/../db_connection.php';
 
   // Check if university is logged in and approved
   if (!isset($_SESSION['university_id']) || $_SESSION['accreditation_status'] !== 'Approved') {
