@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="../dashboard.php">
-                <i class="fas fa-university me-2"></i><?php echo htmlspecialchars($universityName); ?>
+                <i class="fas fa-university me-2"></i><?php $universityName; echo htmlspecialchars($universityName); ?>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
